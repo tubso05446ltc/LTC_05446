@@ -1,67 +1,693 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <title>ระบบดูแลผู้สูงอายุ LTC - รพ.สต.บ้านทับสอ</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body { font-family: 'Sarabun', sans-serif; background: #F8FAFC; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบบันทึกการเยี่ยมผู้สูงอายุที่มีภาวะพึ่งพิง รพ.สต.บ้านทับสอ</title>
+<style>
+  :root{
+    --primary:#0d7f6c; --primary-dark:#075e4f; --accent:#f0a500; --danger:#d64545;
+    --bg:#f2f6f5; --card:#ffffff; --text:#2b2b2b; --border:#dfe6e4;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',Tahoma,'Sarabun',sans-serif;background:var(--bg);color:var(--text);}
+  header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:16px 20px;box-shadow:0 2px 6px rgba(0,0,0,.15);}
+  header h1{margin:0;font-size:20px;}
+  header p{margin:4px 0 0;font-size:13px;opacity:.9;}
+  #connStatus{font-size:12px;margin-top:6px;padding:3px 8px;border-radius:10px;display:inline-block;}
+  .conn-ok{background:#1e8f5f;} .conn-bad{background:#c0392b;}
+  nav{display:flex;flex-wrap:wrap;background:var(--primary-dark);}
+  nav button{flex:1;min-width:120px;padding:12px 8px;border:none;background:transparent;color:#fff;font-size:14px;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;}
+  nav button.active{border-bottom:3px solid var(--accent);background:rgba(255,255,255,.08);font-weight:bold;}
+  nav button:hover{background:rgba(255,255,255,.12);}
+  main{max-width:1100px;margin:16px auto;padding:0 12px;}
+  .tab-content{display:none;} .tab-content.active{display:block;}
+  .card{background:var(--card);border-radius:10px;padding:16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  .card h2{margin-top:0;font-size:17px;color:var(--primary-dark);border-bottom:2px solid var(--border);padding-bottom:8px;}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
+  .stat-box{background:var(--primary);color:#fff;border-radius:10px;padding:14px;text-align:center;}
+  .stat-box.orange{background:var(--accent);} .stat-box.red{background:var(--danger);} .stat-box.blue{background:#2b7cb0;}
+  .stat-box h3{margin:0;font-size:26px;} .stat-box p{margin:4px 0 0;font-size:13px;}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center;}
+  input,select,textarea{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:14px;font-family:inherit;width:100%;}
+  textarea{resize:vertical;min-height:60px;}
+  label{font-size:13px;font-weight:600;color:#444;display:block;margin-bottom:4px;}
+  .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
+  .field{margin-bottom:4px;}
+  .btn{padding:9px 16px;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;transition:.15s;}
+  .btn-primary{background:var(--primary);color:#fff;} .btn-primary:hover{background:var(--primary-dark);}
+  .btn-secondary{background:#e2e8e6;color:#333;} .btn-secondary:hover{background:#cfd8d5;}
+  .btn-danger{background:var(--danger);color:#fff;} .btn-danger:hover{background:#b53838;}
+  .btn-small{padding:5px 10px;font-size:12px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top;}
+  th{background:#eef4f2;color:var(--primary-dark);position:sticky;top:0;}
+  tr:hover{background:#f7fbfa;}
+  .table-wrap{overflow-x:auto;}
+  .badge{padding:3px 8px;border-radius:12px;font-size:12px;color:#fff;white-space:nowrap;}
+  .badge-social{background:#2b9c6b;} .badge-home{background:#e08d1b;} .badge-bed{background:#c0392b;}
+  .actions button{margin-right:4px;margin-bottom:4px;}
+  .hidden{display:none !important;}
+  .search-box{flex:1;min-width:180px;}
+  footer{text-align:center;color:#888;font-size:12px;padding:20px 0;}
+  .thumb{width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer;}
+  .photo-preview-wrap{display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;}
+  .photo-preview{width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--border);}
+  .upload-status{font-size:12px;color:#0d7f6c;margin-top:4px;}
+  .upload-status.err{color:var(--danger);}
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:999;cursor:zoom-out;}
+  .lightbox.show{display:flex;}
+  .lightbox img{max-width:90%;max-height:90%;border-radius:8px;}
+  @media print{
+    nav, .toolbar, .actions, .no-print, header p, #connStatus{display:none !important;}
+    body{background:#fff;} .card{box-shadow:none;border:1px solid #ccc;}
+  }
+  .empty-msg{text-align:center;color:#999;padding:20px;}
+</style>
 </head>
-<body class="text-slate-800">
+<body>
 
-<!-- Top Bar -->
-<nav class="bg-teal-800 text-white p-4 flex justify-between">
-    <h1 class="font-bold">ระบบดูแลผู้สูงอายุ (LTC) - รพ.สต.บ้านทับสอ</h1>
-    <div id="status" class="text-sm bg-teal-900 px-3 py-1 rounded">⏳ กำลังเชื่อมต่อ...</div>
+<header>
+  <h1>🏥 ระบบบันทึกการเยี่ยมผู้สูงอายุที่มีภาวะพึ่งพิง</h1>
+  <p>โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านทับสอ อำเภอเมืองสกลนคร จังหวัดสกลนคร</p>
+  <span id="connStatus" class="conn-bad">⏳ กำลังเชื่อมต่อฐานข้อมูล...</span>
+</header>
+
+<nav>
+  <button class="tab-btn active" data-tab="dashboard" onclick="showTab('dashboard')">📊 แดชบอร์ด</button>
+  <button class="tab-btn" data-tab="patients" onclick="showTab('patients')">👵 ทะเบียนผู้สูงอายุ</button>
+  <button class="tab-btn" data-tab="visits" onclick="showTab('visits')">📝 บันทึกการเยี่ยมบ้าน</button>
+  <button class="tab-btn" data-tab="reports" onclick="showTab('reports')">📄 รายงาน/ส่งออก</button>
 </nav>
 
-<!-- Content -->
-<div class="p-6">
-    <div id="dashboard" class="tab-content active">
-        <h2 class="text-xl font-bold mb-4">Dashboard</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-white p-4 rounded shadow">
-                <p class="text-slate-500">ผู้สูงอายุทั้งหมด</p>
-                <p class="text-2xl font-bold">248 คน</p>
-            </div>
-            <div class="bg-white p-4 rounded shadow">
-                <p class="text-slate-500">ติดบ้าน</p>
-                <p class="text-2xl font-bold text-amber-600">76 คน</p>
-            </div>
-            <div class="bg-white p-4 rounded shadow">
-                <p class="text-slate-500">ติดเตียง</p>
-                <p class="text-2xl font-bold text-red-600">32 คน</p>
-            </div>
-            <div class="bg-white p-4 rounded shadow">
-                <p class="text-slate-500">เคสเร่งด่วน</p>
-                <p class="text-2xl font-bold text-red-700">5 ราย</p>
-            </div>
-        </div>
+<main>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="tab-content active">
+    <div class="card">
+      <h2>ภาพรวมระบบ</h2>
+      <div class="stat-grid" id="statGrid"></div>
     </div>
+    <div class="card">
+      <h2>การเยี่ยมล่าสุด</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>รูป</th><th>วันที่เยี่ยม</th><th>ชื่อผู้สูงอายุ</th><th>ประเภท</th><th>ADL</th><th>ผู้เยี่ยม</th></tr></thead>
+          <tbody id="recentVisitsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PATIENTS -->
+  <div id="patients" class="tab-content">
+    <div class="card">
+      <h2 id="patientFormTitle">เพิ่มผู้สูงอายุใหม่</h2>
+      <form id="patientForm">
+        <input type="hidden" id="p_id">
+        <input type="hidden" id="p_photoUrl">
+        <div class="form-grid">
+          <div class="field"><label>เลขประจำตัวประชาชน</label><input type="text" id="p_nid" maxlength="13" placeholder="เลข 13 หลัก"></div>
+          <div class="field"><label>คำนำหน้า-ชื่อ-นามสกุล *</label><input type="text" id="p_name" required placeholder="เช่น นายสมชาย ใจดี"></div>
+          <div class="field"><label>อายุ (ปี)</label><input type="number" id="p_age" min="0" max="120"></div>
+          <div class="field"><label>เพศ</label>
+            <select id="p_gender"><option value="ชาย">ชาย</option><option value="หญิง">หญิง</option></select>
+          </div>
+          <div class="field"><label>บ้านเลขที่/หมู่บ้าน</label><input type="text" id="p_address" placeholder="บ้านทับสอ หมู่..."></div>
+          <div class="field"><label>ประเภทภาวะพึ่งพิง *</label>
+            <select id="p_type" required>
+              <option value="ติดสังคม">ติดสังคม</option>
+              <option value="ติดบ้าน">ติดบ้าน</option>
+              <option value="ติดเตียง">ติดเตียง</option>
+            </select>
+          </div>
+          <div class="field"><label>โรคประจำตัว</label><input type="text" id="p_disease" placeholder="เช่น เบาหวาน ความดัน อัมพาต"></div>
+          <div class="field"><label>ผู้ดูแลหลัก</label><input type="text" id="p_caregiver"></div>
+          <div class="field"><label>เบอร์โทรผู้ดูแล</label><input type="text" id="p_phone"></div>
+        </div>
+        <div class="field"><label>หมายเหตุ</label><textarea id="p_note"></textarea></div>
+        <div class="field">
+          <label>📷 รูปถ่ายผู้สูงอายุ/บ้านพัก</label>
+          <input type="file" id="p_photoFile" accept="image/*">
+          <div class="photo-preview-wrap" id="p_photoPreviewWrap"></div>
+          <div class="upload-status" id="p_uploadStatus"></div>
+        </div>
+        <div class="toolbar">
+          <button type="submit" class="btn btn-primary" id="p_submitBtn">💾 บันทึก</button>
+          <button type="button" class="btn btn-secondary" onclick="resetPatientForm()">ล้างฟอร์ม</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>รายชื่อผู้สูงอายุทั้งหมด</h2>
+      <div class="toolbar">
+        <input type="text" class="search-box" id="patientSearch" placeholder="ค้นหาชื่อ, หมู่บ้าน, เลขบัตร..." oninput="renderPatients()">
+        <select id="filterType" onchange="renderPatients()">
+          <option value="">ทุกประเภท</option>
+          <option value="ติดสังคม">ติดสังคม</option>
+          <option value="ติดบ้าน">ติดบ้าน</option>
+          <option value="ติดเตียง">ติดเตียง</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>รูป</th><th>ชื่อ-สกุล</th><th>อายุ</th><th>ที่อยู่</th><th>ประเภท</th><th>ผู้ดูแล</th><th class="no-print">จัดการ</th></tr></thead>
+          <tbody id="patientsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISITS -->
+  <div id="visits" class="tab-content">
+    <div class="card">
+      <h2 id="visitFormTitle">บันทึกการเยี่ยมบ้านใหม่</h2>
+      <form id="visitForm">
+        <input type="hidden" id="v_id">
+        <input type="hidden" id="v_photoUrl">
+        <div class="form-grid">
+          <div class="field"><label>เลือกผู้สูงอายุ *</label><select id="v_patient" required></select></div>
+          <div class="field"><label>วันที่เยี่ยม *</label><input type="date" id="v_date" required></div>
+          <div class="field"><label>ผู้เยี่ยม (จนท./อสม.)</label><input type="text" id="v_visitor"></div>
+          <div class="field"><label>ความดันโลหิต (BP)</label><input type="text" id="v_bp" placeholder="เช่น 120/80"></div>
+          <div class="field"><label>ชีพจร (PR)</label><input type="number" id="v_pr"></div>
+          <div class="field"><label>อุณหภูมิ (°C)</label><input type="number" step="0.1" id="v_temp"></div>
+          <div class="field"><label>น้ำตาลปลายนิ้ว (DTX)</label><input type="number" id="v_dtx"></div>
+          <div class="field"><label>คะแนน ADL (0-20)</label><input type="number" id="v_adl" min="0" max="20"></div>
+          <div class="field"><label>วันนัดเยี่ยมครั้งถัดไป</label><input type="date" id="v_nextdate"></div>
+        </div>
+        <div class="field"><label>ปัญหา/อาการที่พบ</label><textarea id="v_problem"></textarea></div>
+        <div class="field"><label>การช่วยเหลือ/พยาบาลที่ให้</label><textarea id="v_help"></textarea></div>
+        <div class="field"><label>แผนการดูแลครั้งถัดไป</label><textarea id="v_plan"></textarea></div>
+        <div class="field">
+          <label>📷 รูปถ่ายระหว่างเยี่ยม (เช่น สภาพแผล, สภาพอาการ)</label>
+          <input type="file" id="v_photoFile" accept="image/*">
+          <div class="photo-preview-wrap" id="v_photoPreviewWrap"></div>
+          <div class="upload-status" id="v_uploadStatus"></div>
+        </div>
+        <div class="toolbar">
+          <button type="submit" class="btn btn-primary" id="v_submitBtn">💾 บันทึกการเยี่ยม</button>
+          <button type="button" class="btn btn-secondary" onclick="resetVisitForm()">ล้างฟอร์ม</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>ประวัติการเยี่ยมบ้าน</h2>
+      <div class="toolbar">
+        <select id="visitFilterPatient" onchange="renderVisits()"><option value="">-- ผู้สูงอายุทั้งหมด --</option></select>
+        <input type="date" id="visitFilterFrom" onchange="renderVisits()">
+        <span>ถึง</span>
+        <input type="date" id="visitFilterTo" onchange="renderVisits()">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>รูป</th><th>วันที่</th><th>ผู้สูงอายุ</th><th>ADL</th><th>BP/PR/T</th><th>ปัญหาที่พบ</th><th>ผู้เยี่ยม</th><th class="no-print">จัดการ</th></tr></thead>
+          <tbody id="visitsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div id="reports" class="tab-content">
+    <div class="card">
+      <h2>ส่งออกและพิมพ์รายงาน</h2>
+      <p>ส่งออกข้อมูลทั้งหมดเพื่อสำรอง หรือนำไปวิเคราะห์ต่อใน Excel</p>
+      <div class="toolbar">
+        <button class="btn btn-primary" onclick="exportPatientsCSV()">⬇️ ส่งออกทะเบียนผู้สูงอายุ (CSV)</button>
+        <button class="btn btn-primary" onclick="exportVisitsCSV()">⬇️ ส่งออกบันทึกการเยี่ยม (CSV)</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ พิมพ์หน้านี้</button>
+        <button class="btn btn-danger" onclick="clearAllData()">🗑️ ล้างข้อมูลทั้งหมด</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>สรุปจำนวนตามหมู่บ้าน/ประเภท</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ที่อยู่/หมู่บ้าน</th><th>ติดสังคม</th><th>ติดบ้าน</th><th>ติดเตียง</th><th>รวม</th></tr></thead>
+          <tbody id="summaryBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>ระบบบันทึกข้อมูลผู้สูงอายุที่มีภาวะพึ่งพิง | รพ.สต.บ้านทับสอ อ.เมืองสกลนคร จ.สกลนคร | ข้อมูลจัดเก็บบน Firebase (ltc-05446) + รูปภาพเก็บบน ImgBB</footer>
+
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('show')">
+  <img id="lightboxImg" src="">
 </div>
 
-<!-- Firebase & Logic -->
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
-    const firebaseConfig = {
-        // ใส่ apiKey ของคุณที่นี่
-        apiKey: "YOUR_API_KEY",
-        projectId: "ltc-05446"
-    };
+// 🔑 ใส่ apiKey ตัวจริงแทนตรงนี้ (ก็อปจาก Firebase Console -> Project settings)
+const firebaseConfig = {
+  apiKey: "ใส่ apiKey ตัวจริงของคุณตรงนี้",
+  authDomain: "ltc-05446.firebaseapp.com",
+  databaseURL: "https://ltc-05446-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ltc-05446",
+  storageBucket: "ltc-05446.firebasestorage.app",
+  messagingSenderId: "927865454515",
+  appId: "1:927865454515:web:5d9983ea81df23d1f8d5c6",
+  measurementId: "G-T9F34CWE8T"
+};
 
-    try {
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        document.getElementById('status').innerText = "🟢 เชื่อมต่อฐานข้อมูลแล้ว";
-        document.getElementById('status').className = "text-sm bg-green-900 px-3 py-1 rounded";
-    } catch (e) {
-        document.getElementById('status').innerText = "🔴 เชื่อมต่อไม่ได้ (ใส่ API Key)";
-        document.getElementById('status').className = "text-sm bg-red-900 px-3 py-1 rounded";
+// 🔑 ImgBB API Key สำหรับเก็บรูปภาพ
+const IMGBB_API_KEY = "6d050ff0baa662110ba2ca12c7247555";
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const patientsCol = db.collection('patients');
+const visitsCol = db.collection('visits');
+
+let patients = [];
+let visits = [];
+
+// ---------- IMGBB UPLOAD ----------
+async function uploadToImgBB(file, statusElId){
+  const statusEl = document.getElementById(statusElId);
+  statusEl.textContent = '⏳ กำลังอัปโหลดรูปภาพ...';
+  statusEl.className = 'upload-status';
+  const formData = new FormData();
+  formData.append('image', file);
+  const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+    method: 'POST',
+    body: formData
+  });
+  const data = await res.json();
+  if(!data.success){ throw new Error(data.error?.message || 'อัปโหลดรูปภาพไม่สำเร็จ'); }
+  statusEl.textContent = '✅ อัปโหลดรูปภาพสำเร็จ';
+  return data.data.url; // ลิงก์รูปถาวรบน ImgBB
+}
+
+function showPhotoPreview(wrapId, url){
+  const wrap = document.getElementById(wrapId);
+  if(!url){ wrap.innerHTML=''; return; }
+  wrap.innerHTML = `<img src="${url}" class="photo-preview" onclick="openLightbox('${url}')">`;
+}
+
+function openLightbox(url){
+  document.getElementById('lightboxImg').src = url;
+  document.getElementById('lightbox').classList.add('show');
+}
+
+// ---------- CONNECTION STATUS ----------
+const connEl = document.getElementById('connStatus');
+function setConnected(){ connEl.textContent = '🟢 เชื่อมต่อฐานข้อมูลสำเร็จ'; connEl.className='conn-ok'; }
+function setError(msg){ connEl.textContent = '🔴 เชื่อมต่อผิดพลาด: '+msg; connEl.className='conn-bad'; }
+
+// ---------- REALTIME LISTENERS ----------
+patientsCol.onSnapshot(snapshot=>{
+  patients = snapshot.docs.map(d=>({ id:d.id, ...d.data() }));
+  setConnected();
+  populatePatientSelects();
+  renderPatients();
+  renderDashboard();
+  renderSummary();
+}, err=> setError(err.message));
+
+visitsCol.onSnapshot(snapshot=>{
+  visits = snapshot.docs.map(d=>({ id:d.id, ...d.data() }));
+  setConnected();
+  renderVisits();
+  renderDashboard();
+}, err=> setError(err.message));
+
+// ---------- NAV ----------
+function showTab(name){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tab-btn[data-tab="'+name+'"]').classList.add('active');
+  if(name==='dashboard') renderDashboard();
+  if(name==='patients') renderPatients();
+  if(name==='visits'){ populatePatientSelects(); renderVisits(); }
+  if(name==='reports') renderSummary();
+}
+
+// ---------- PATIENTS ----------
+document.getElementById('patientForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const submitBtn = document.getElementById('p_submitBtn');
+  submitBtn.disabled = true;
+  try{
+    let photoUrl = document.getElementById('p_photoUrl').value || '';
+    const fileInput = document.getElementById('p_photoFile');
+    if(fileInput.files && fileInput.files[0]){
+      photoUrl = await uploadToImgBB(fileInput.files[0], 'p_uploadStatus');
     }
+    const id = document.getElementById('p_id').value;
+    const patient = {
+      nid: document.getElementById('p_nid').value.trim(),
+      name: document.getElementById('p_name').value.trim(),
+      age: document.getElementById('p_age').value,
+      gender: document.getElementById('p_gender').value,
+      address: document.getElementById('p_address').value.trim(),
+      type: document.getElementById('p_type').value,
+      disease: document.getElementById('p_disease').value.trim(),
+      caregiver: document.getElementById('p_caregiver').value.trim(),
+      phone: document.getElementById('p_phone').value.trim(),
+      note: document.getElementById('p_note').value.trim(),
+      photoUrl: photoUrl,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    if(id){ await patientsCol.doc(id).update(patient); }
+    else{ patient.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await patientsCol.add(patient); }
+    resetPatientForm();
+    alert('บันทึกข้อมูลผู้สูงอายุเรียบร้อย');
+  }catch(err){
+    document.getElementById('p_uploadStatus').textContent = '❌ '+err.message;
+    document.getElementById('p_uploadStatus').className = 'upload-status err';
+    alert('บันทึกไม่สำเร็จ: '+err.message);
+  }finally{
+    submitBtn.disabled = false;
+  }
+});
+
+function resetPatientForm(){
+  document.getElementById('patientForm').reset();
+  document.getElementById('p_id').value='';
+  document.getElementById('p_photoUrl').value='';
+  document.getElementById('p_uploadStatus').textContent='';
+  showPhotoPreview('p_photoPreviewWrap', '');
+  document.getElementById('patientFormTitle').textContent='เพิ่มผู้สูงอายุใหม่';
+}
+
+function editPatient(id){
+  const p = patients.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('p_id').value=p.id;
+  document.getElementById('p_nid').value=p.nid||'';
+  document.getElementById('p_name').value=p.name||'';
+  document.getElementById('p_age').value=p.age||'';
+  document.getElementById('p_gender').value=p.gender||'ชาย';
+  document.getElementById('p_address').value=p.address||'';
+  document.getElementById('p_type').value=p.type||'ติดสังคม';
+  document.getElementById('p_disease').value=p.disease||'';
+  document.getElementById('p_caregiver').value=p.caregiver||'';
+  document.getElementById('p_phone').value=p.phone||'';
+  document.getElementById('p_note').value=p.note||'';
+  document.getElementById('p_photoUrl').value=p.photoUrl||'';
+  showPhotoPreview('p_photoPreviewWrap', p.photoUrl||'');
+  document.getElementById('p_uploadStatus').textContent='';
+  document.getElementById('patientFormTitle').textContent='แก้ไขข้อมูล: '+p.name;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function deletePatient(id){
+  if(!confirm('ยืนยันการลบข้อมูลผู้สูงอายุนี้? (ประวัติการเยี่ยมที่เกี่ยวข้องจะถูกลบด้วย)')) return;
+  try{
+    const relatedVisits = await visitsCol.where('patientId','==',id).get();
+    const batch = db.batch();
+    relatedVisits.forEach(doc=> batch.delete(doc.ref));
+    batch.delete(patientsCol.doc(id));
+    await batch.commit();
+  }catch(err){ alert('ลบไม่สำเร็จ: '+err.message); }
+}
+
+function typeBadge(type){
+  if(type==='ติดสังคม') return '<span class="badge badge-social">ติดสังคม</span>';
+  if(type==='ติดบ้าน') return '<span class="badge badge-home">ติดบ้าน</span>';
+  return '<span class="badge badge-bed">ติดเตียง</span>';
+}
+
+function thumbCell(url){
+  if(!url) return '-';
+  return `<img src="${url}" class="thumb" onclick="openLightbox('${url}')">`;
+}
+
+function renderPatients(){
+  const search = (document.getElementById('patientSearch')?.value||'').toLowerCase();
+  const filterType = document.getElementById('filterType')?.value||'';
+  const body = document.getElementById('patientsBody');
+  let list = patients.filter(p=>{
+    const matchSearch = !search || ((p.name||'')+(p.address||'')+(p.nid||'')).toLowerCase().includes(search);
+    const matchType = !filterType || p.type===filterType;
+    return matchSearch && matchType;
+  });
+  if(list.length===0){
+    body.innerHTML = '<tr><td colspan="7" class="empty-msg">ยังไม่มีข้อมูล หรือไม่พบผลการค้นหา</td></tr>';
+    return;
+  }
+  body.innerHTML = list.map(p=>`
+    <tr>
+      <td>${thumbCell(p.photoUrl)}</td>
+      <td><b>${p.name}</b>${p.disease?'<br><small style="color:#777">'+p.disease+'</small>':''}</td>
+      <td>${p.age||'-'}</td>
+      <td>${p.address||'-'}</td>
+      <td>${typeBadge(p.type)}</td>
+      <td>${p.caregiver||'-'}${p.phone?'<br><small>'+p.phone+'</small>':''}</td>
+      <td class="actions no-print">
+        <button class="btn btn-secondary btn-small" onclick="goToVisitHistory('${p.id}')">ประวัติเยี่ยม</button><br>
+        <button class="btn btn-secondary btn-small" onclick="editPatient('${p.id}')">แก้ไข</button>
+        <button class="btn btn-danger btn-small" onclick="deletePatient('${p.id}')">ลบ</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function goToVisitHistory(patientId){
+  showTab('visits');
+  document.getElementById('visitFilterPatient').value = patientId;
+  renderVisits();
+}
+
+// ---------- VISITS ----------
+function populatePatientSelects(){
+  const opts = patients.map(p=>`<option value="${p.id}">${p.name} (${p.type})</option>`).join('');
+  const vSelect = document.getElementById('v_patient');
+  const fSelect = document.getElementById('visitFilterPatient');
+  const currentFilter = fSelect.value;
+  vSelect.innerHTML = '<option value="">-- เลือกผู้สูงอายุ --</option>' + opts;
+  fSelect.innerHTML = '<option value="">-- ผู้สูงอายุทั้งหมด --</option>' + opts;
+  fSelect.value = currentFilter;
+}
+
+document.getElementById('visitForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const patientId = document.getElementById('v_patient').value;
+  if(!patientId){ alert('กรุณาเลือกผู้สูงอายุ'); return; }
+  const submitBtn = document.getElementById('v_submitBtn');
+  submitBtn.disabled = true;
+  try{
+    let photoUrl = document.getElementById('v_photoUrl').value || '';
+    const fileInput = document.getElementById('v_photoFile');
+    if(fileInput.files && fileInput.files[0]){
+      photoUrl = await uploadToImgBB(fileInput.files[0], 'v_uploadStatus');
+    }
+    const id = document.getElementById('v_id').value;
+    const visit = {
+      patientId,
+      date: document.getElementById('v_date').value,
+      visitor: document.getElementById('v_visitor').value.trim(),
+      bp: document.getElementById('v_bp').value.trim(),
+      pr: document.getElementById('v_pr').value,
+      temp: document.getElementById('v_temp').value,
+      dtx: document.getElementById('v_dtx').value,
+      adl: document.getElementById('v_adl').value,
+      nextdate: document.getElementById('v_nextdate').value,
+      problem: document.getElementById('v_problem').value.trim(),
+      help: document.getElementById('v_help').value.trim(),
+      plan: document.getElementById('v_plan').value.trim(),
+      photoUrl: photoUrl
+    };
+    if(id){ await visitsCol.doc(id).update(visit); }
+    else{ await visitsCol.add(visit); }
+    resetVisitForm();
+    alert('บันทึกการเยี่ยมบ้านเรียบร้อย');
+  }catch(err){
+    document.getElementById('v_uploadStatus').textContent = '❌ '+err.message;
+    document.getElementById('v_uploadStatus').className = 'upload-status err';
+    alert('บันทึกไม่สำเร็จ: '+err.message);
+  }finally{
+    submitBtn.disabled = false;
+  }
+});
+
+function resetVisitForm(){
+  document.getElementById('visitForm').reset();
+  document.getElementById('v_id').value='';
+  document.getElementById('v_photoUrl').value='';
+  document.getElementById('v_uploadStatus').textContent='';
+  showPhotoPreview('v_photoPreviewWrap', '');
+  document.getElementById('v_date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('visitFormTitle').textContent='บันทึกการเยี่ยมบ้านใหม่';
+}
+
+function editVisit(id){
+  const v = visits.find(x=>x.id===id);
+  if(!v) return;
+  showTab('visits');
+  populatePatientSelects();
+  document.getElementById('v_id').value=v.id;
+  document.getElementById('v_patient').value=v.patientId;
+  document.getElementById('v_date').value=v.date;
+  document.getElementById('v_visitor').value=v.visitor||'';
+  document.getElementById('v_bp').value=v.bp||'';
+  document.getElementById('v_pr').value=v.pr||'';
+  document.getElementById('v_temp').value=v.temp||'';
+  document.getElementById('v_dtx').value=v.dtx||'';
+  document.getElementById('v_adl').value=v.adl||'';
+  document.getElementById('v_nextdate').value=v.nextdate||'';
+  document.getElementById('v_problem').value=v.problem||'';
+  document.getElementById('v_help').value=v.help||'';
+  document.getElementById('v_plan').value=v.plan||'';
+  document.getElementById('v_photoUrl').value=v.photoUrl||'';
+  showPhotoPreview('v_photoPreviewWrap', v.photoUrl||'');
+  document.getElementById('v_uploadStatus').textContent='';
+  document.getElementById('visitFormTitle').textContent='แก้ไขบันทึกการเยี่ยม';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function deleteVisit(id){
+  if(!confirm('ยืนยันการลบบันทึกการเยี่ยมนี้?')) return;
+  try{ await visitsCol.doc(id).delete(); }
+  catch(err){ alert('ลบไม่สำเร็จ: '+err.message); }
+}
+
+function renderVisits(){
+  const filterPatient = document.getElementById('visitFilterPatient').value;
+  const from = document.getElementById('visitFilterFrom').value;
+  const to = document.getElementById('visitFilterTo').value;
+  const body = document.getElementById('visitsBody');
+  let list = visits.filter(v=>{
+    let ok = true;
+    if(filterPatient) ok = ok && v.patientId===filterPatient;
+    if(from) ok = ok && v.date>=from;
+    if(to) ok = ok && v.date<=to;
+    return ok;
+  }).sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+
+  if(list.length===0){
+    body.innerHTML = '<tr><td colspan="8" class="empty-msg">ยังไม่มีบันทึกการเยี่ยม</td></tr>';
+    return;
+  }
+  body.innerHTML = list.map(v=>{
+    const p = patients.find(x=>x.id===v.patientId);
+    return `<tr>
+      <td>${thumbCell(v.photoUrl)}</td>
+      <td>${formatDate(v.date)}</td>
+      <td>${p? p.name : '(ไม่พบข้อมูล)'}</td>
+      <td>${v.adl||'-'}</td>
+      <td>${v.bp||'-'} / ${v.pr||'-'} / ${v.temp||'-'}°C</td>
+      <td>${v.problem||'-'}</td>
+      <td>${v.visitor||'-'}</td>
+      <td class="actions no-print">
+        <button class="btn btn-secondary btn-small" onclick="editVisit('${v.id}')">แก้ไข</button>
+        <button class="btn btn-danger btn-small" onclick="deleteVisit('${v.id}')">ลบ</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function formatDate(d){
+  if(!d) return '-';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+// ---------- DASHBOARD ----------
+function renderDashboard(){
+  const total = patients.length;
+  const social = patients.filter(p=>p.type==='ติดสังคม').length;
+  const home = patients.filter(p=>p.type==='ติดบ้าน').length;
+  const bed = patients.filter(p=>p.type==='ติดเตียง').length;
+  const now = new Date();
+  const monthStr = now.toISOString().slice(0,7);
+  const visitsThisMonth = visits.filter(v=>v.date && v.date.startsWith(monthStr)).length;
+
+  document.getElementById('statGrid').innerHTML = `
+    <div class="stat-box"><h3>${total}</h3><p>ผู้สูงอายุทั้งหมด</p></div>
+    <div class="stat-box blue"><h3>${social}</h3><p>กลุ่มติดสังคม</p></div>
+    <div class="stat-box orange"><h3>${home}</h3><p>กลุ่มติดบ้าน</p></div>
+    <div class="stat-box red"><h3>${bed}</h3><p>กลุ่มติดเตียง</p></div>
+    <div class="stat-box"><h3>${visitsThisMonth}</h3><p>เยี่ยมเดือนนี้</p></div>
+    <div class="stat-box"><h3>${visits.length}</h3><p>บันทึกเยี่ยมทั้งหมด</p></div>
+  `;
+
+  const recent = [...visits].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,10);
+  const body = document.getElementById('recentVisitsBody');
+  if(recent.length===0){
+    body.innerHTML = '<tr><td colspan="6" class="empty-msg">ยังไม่มีข้อมูลการเยี่ยม</td></tr>';
+  } else {
+    body.innerHTML = recent.map(v=>{
+      const p = patients.find(x=>x.id===v.patientId);
+      return `<tr><td>${thumbCell(v.photoUrl)}</td><td>${formatDate(v.date)}</td><td>${p?p.name:'-'}</td><td>${p?typeBadge(p.type):'-'}</td><td>${v.adl||'-'}</td><td>${v.visitor||'-'}</td></tr>`;
+    }).join('');
+  }
+}
+
+// ---------- REPORTS ----------
+function renderSummary(){
+  const addressMap = {};
+  patients.forEach(p=>{
+    const addr = p.address || 'ไม่ระบุ';
+    if(!addressMap[addr]) addressMap[addr] = {social:0, home:0, bed:0};
+    if(p.type==='ติดสังคม') addressMap[addr].social++;
+    else if(p.type==='ติดบ้าน') addressMap[addr].home++;
+    else addressMap[addr].bed++;
+  });
+  const body = document.getElementById('summaryBody');
+  const keys = Object.keys(addressMap);
+  if(keys.length===0){
+    body.innerHTML = '<tr><td colspan="5" class="empty-msg">ยังไม่มีข้อมูล</td></tr>';
+    return;
+  }
+  body.innerHTML = keys.map(addr=>{
+    const s = addressMap[addr];
+    const sum = s.social+s.home+s.bed;
+    return `<tr><td>${addr}</td><td>${s.social}</td><td>${s.home}</td><td>${s.bed}</td><td><b>${sum}</b></td></tr>`;
+  }).join('');
+}
+
+function downloadCSV(filename, rows){
+  const csvContent = rows.map(r=>r.map(cell=>{
+    const val = (cell===undefined||cell===null) ? '' : String(cell);
+    return '"' + val.replace(/"/g,'""') + '"';
+  }).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF'+csvContent], {type:'text/csv;charset=utf-8;'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+
+function exportPatientsCSV(){
+  const rows = [['เลขบัตรประชาชน','ชื่อ-สกุล','อายุ','เพศ','ที่อยู่','ประเภท','โรคประจำตัว','ผู้ดูแล','เบอร์โทร','หมายเหตุ','ลิงก์รูปภาพ']];
+  patients.forEach(p=>rows.push([p.nid,p.name,p.age,p.gender,p.address,p.type,p.disease,p.caregiver,p.phone,p.note,p.photoUrl]));
+  downloadCSV('ทะเบียนผู้สูงอายุ_บ้านทับสอ.csv', rows);
+}
+
+function exportVisitsCSV(){
+  const rows = [['วันที่เยี่ยม','ชื่อผู้สูงอายุ','ประเภท','ผู้เยี่ยม','BP','PR','Temp','DTX','ADL','ปัญหาที่พบ','การช่วยเหลือ','แผนครั้งถัดไป','นัดครั้งถัดไป','ลิงก์รูปภาพ']];
+  visits.forEach(v=>{
+    const p = patients.find(x=>x.id===v.patientId);
+    rows.push([v.date, p?p.name:'', p?p.type:'', v.visitor, v.bp, v.pr, v.temp, v.dtx, v.adl, v.problem, v.help, v.plan, v.nextdate, v.photoUrl]);
+  });
+  downloadCSV('บันทึกการเยี่ยมบ้าน_บ้านทับสอ.csv', rows);
+}
+
+async function clearAllData(){
+  if(!confirm('⚠️ ยืนยันการล้างข้อมูลทั้งหมดในระบบ? การกระทำนี้ไม่สามารถย้อนกลับได้')) return;
+  if(!confirm('ยืนยันอีกครั้ง: ข้อมูลทะเบียนผู้สูงอายุและประวัติการเยี่ยมทั้งหมดจะถูกลบถาวร')) return;
+  try{
+    const pSnap = await patientsCol.get();
+    const vSnap = await visitsCol.get();
+    const batch = db.batch();
+    pSnap.forEach(d=>batch.delete(d.ref));
+    vSnap.forEach(d=>batch.delete(d.ref));
+    await batch.commit();
+    alert('ล้างข้อมูลเรียบร้อยแล้ว');
+  }catch(err){ alert('ล้างข้อมูลไม่สำเร็จ: '+err.message); }
+}
+
+// ---------- INIT ----------
+document.getElementById('v_date').value = new Date().toISOString().split('T')[0];
 </script>
 </body>
 </html>
