@@ -3,249 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ระบบบันทึกการเยี่ยมผู้สูงอายุที่มีภาวะพึ่งพิง รพ.สต.บ้านทับสอ</title>
+<title>ระบบดูแลผู้สูงอายุระยะยาว (LTC) | รพ.สต.บ้านทับสอ</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: { DEFAULT: '#0F766E', dark: '#0B5A54', light: '#CCFBF1' },
+        secondary: { DEFAULT: '#2563EB' },
+      },
+      fontFamily: { sans: ['"Noto Sans Thai"', '"Sarabun"', 'sans-serif'] },
+    },
+  },
+};
+</script>
+<style type="text/tailwindcss">
+  @layer components {
+    .input { @apply w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary; }
+    .lbl { @apply block text-sm font-medium text-slate-600 mb-1; }
+  }
+</style>
 <style>
-  :root{
-    --primary:#0d7f6c; --primary-dark:#075e4f; --accent:#f0a500; --danger:#d64545;
-    --bg:#f2f6f5; --card:#ffffff; --text:#2b2b2b; --border:#dfe6e4;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0;font-family:'Segoe UI',Tahoma,'Sarabun',sans-serif;background:var(--bg);color:var(--text);}
-  header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:16px 20px;box-shadow:0 2px 6px rgba(0,0,0,.15);}
-  header h1{margin:0;font-size:20px;}
-  header p{margin:4px 0 0;font-size:13px;opacity:.9;}
-  #connStatus{font-size:12px;margin-top:6px;padding:3px 8px;border-radius:10px;display:inline-block;}
-  .conn-ok{background:#1e8f5f;} .conn-bad{background:#c0392b;}
-  nav{display:flex;flex-wrap:wrap;background:var(--primary-dark);}
-  nav button{flex:1;min-width:120px;padding:12px 8px;border:none;background:transparent;color:#fff;font-size:14px;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;}
-  nav button.active{border-bottom:3px solid var(--accent);background:rgba(255,255,255,.08);font-weight:bold;}
-  nav button:hover{background:rgba(255,255,255,.12);}
-  main{max-width:1100px;margin:16px auto;padding:0 12px;}
-  .tab-content{display:none;} .tab-content.active{display:block;}
-  .card{background:var(--card);border-radius:10px;padding:16px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
-  .card h2{margin-top:0;font-size:17px;color:var(--primary-dark);border-bottom:2px solid var(--border);padding-bottom:8px;}
-  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;}
-  .stat-box{background:var(--primary);color:#fff;border-radius:10px;padding:14px;text-align:center;}
-  .stat-box.orange{background:var(--accent);} .stat-box.red{background:var(--danger);} .stat-box.blue{background:#2b7cb0;}
-  .stat-box h3{margin:0;font-size:26px;} .stat-box p{margin:4px 0 0;font-size:13px;}
-  .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center;}
-  input,select,textarea{padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:14px;font-family:inherit;width:100%;}
-  textarea{resize:vertical;min-height:60px;}
-  label{font-size:13px;font-weight:600;color:#444;display:block;margin-bottom:4px;}
-  .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
-  .field{margin-bottom:4px;}
-  .btn{padding:9px 16px;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;transition:.15s;}
-  .btn-primary{background:var(--primary);color:#fff;} .btn-primary:hover{background:var(--primary-dark);}
-  .btn-secondary{background:#e2e8e6;color:#333;} .btn-secondary:hover{background:#cfd8d5;}
-  .btn-danger{background:var(--danger);color:#fff;} .btn-danger:hover{background:#b53838;}
-  .btn-small{padding:5px 10px;font-size:12px;}
-  table{width:100%;border-collapse:collapse;font-size:13px;}
-  th,td{padding:8px 6px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top;}
-  th{background:#eef4f2;color:var(--primary-dark);position:sticky;top:0;}
-  tr:hover{background:#f7fbfa;}
-  .table-wrap{overflow-x:auto;}
-  .badge{padding:3px 8px;border-radius:12px;font-size:12px;color:#fff;white-space:nowrap;}
-  .badge-social{background:#2b9c6b;} .badge-home{background:#e08d1b;} .badge-bed{background:#c0392b;}
-  .actions button{margin-right:4px;margin-bottom:4px;}
-  .hidden{display:none !important;}
-  .search-box{flex:1;min-width:180px;}
-  footer{text-align:center;color:#888;font-size:12px;padding:20px 0;}
-  .thumb{width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer;}
-  .photo-preview-wrap{display:flex;gap:10px;align-items:center;margin-top:6px;flex-wrap:wrap;}
-  .photo-preview{width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--border);}
-  .upload-status{font-size:12px;color:#0d7f6c;margin-top:4px;}
-  .upload-status.err{color:var(--danger);}
-  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:999;cursor:zoom-out;}
-  .lightbox.show{display:flex;}
-  .lightbox img{max-width:90%;max-height:90%;border-radius:8px;}
-  @media print{
-    nav, .toolbar, .actions, .no-print, header p, #connStatus{display:none !important;}
-    body{background:#fff;} .card{box-shadow:none;border:1px solid #ccc;}
-  }
-  .empty-msg{text-align:center;color:#999;padding:20px;}
+  body { font-family: 'Noto Sans Thai', 'Sarabun', sans-serif; background:#F8FAFC; color:#1E293B; }
+  ::-webkit-scrollbar { width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+  #boot { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#F8FAFC; z-index:9999; flex-direction:column; gap:12px; }
+  .spin { width:42px; height:42px; border:4px solid #CCFBF1; border-top-color:#0F766E; border-radius:50%; animation:sp .8s linear infinite; }
+  @keyframes sp { to { transform:rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🏥 ระบบบันทึกการเยี่ยมผู้สูงอายุที่มีภาวะพึ่งพิง</h1>
-  <p>โรงพยาบาลส่งเสริมสุขภาพตำบลบ้านทับสอ อำเภอเมืองสกลนคร จังหวัดสกลนคร</p>
-  <span id="connStatus" class="conn-bad">⏳ กำลังเชื่อมต่อฐานข้อมูล...</span>
-</header>
+<div id="boot"><div class="spin"></div><p style="color:#64748B;font-size:14px;">กำลังโหลดระบบ...</p></div>
+<div id="root"></div>
 
-<nav>
-  <button class="tab-btn active" data-tab="dashboard" onclick="showTab('dashboard')">📊 แดชบอร์ด</button>
-  <button class="tab-btn" data-tab="patients" onclick="showTab('patients')">👵 ทะเบียนผู้สูงอายุ</button>
-  <button class="tab-btn" data-tab="visits" onclick="showTab('visits')">📝 บันทึกการเยี่ยมบ้าน</button>
-  <button class="tab-btn" data-tab="reports" onclick="showTab('reports')">📄 รายงาน/ส่งออก</button>
-</nav>
-
-<main>
-
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="tab-content active">
-    <div class="card">
-      <h2>ภาพรวมระบบ</h2>
-      <div class="stat-grid" id="statGrid"></div>
-    </div>
-    <div class="card">
-      <h2>การเยี่ยมล่าสุด</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>รูป</th><th>วันที่เยี่ยม</th><th>ชื่อผู้สูงอายุ</th><th>ประเภท</th><th>ADL</th><th>ผู้เยี่ยม</th></tr></thead>
-          <tbody id="recentVisitsBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- PATIENTS -->
-  <div id="patients" class="tab-content">
-    <div class="card">
-      <h2 id="patientFormTitle">เพิ่มผู้สูงอายุใหม่</h2>
-      <form id="patientForm">
-        <input type="hidden" id="p_id">
-        <input type="hidden" id="p_photoUrl">
-        <div class="form-grid">
-          <div class="field"><label>เลขประจำตัวประชาชน</label><input type="text" id="p_nid" maxlength="13" placeholder="เลข 13 หลัก"></div>
-          <div class="field"><label>คำนำหน้า-ชื่อ-นามสกุล *</label><input type="text" id="p_name" required placeholder="เช่น นายสมชาย ใจดี"></div>
-          <div class="field"><label>อายุ (ปี)</label><input type="number" id="p_age" min="0" max="120"></div>
-          <div class="field"><label>เพศ</label>
-            <select id="p_gender"><option value="ชาย">ชาย</option><option value="หญิง">หญิง</option></select>
-          </div>
-          <div class="field"><label>บ้านเลขที่/หมู่บ้าน</label><input type="text" id="p_address" placeholder="บ้านทับสอ หมู่..."></div>
-          <div class="field"><label>ประเภทภาวะพึ่งพิง *</label>
-            <select id="p_type" required>
-              <option value="ติดสังคม">ติดสังคม</option>
-              <option value="ติดบ้าน">ติดบ้าน</option>
-              <option value="ติดเตียง">ติดเตียง</option>
-            </select>
-          </div>
-          <div class="field"><label>โรคประจำตัว</label><input type="text" id="p_disease" placeholder="เช่น เบาหวาน ความดัน อัมพาต"></div>
-          <div class="field"><label>ผู้ดูแลหลัก</label><input type="text" id="p_caregiver"></div>
-          <div class="field"><label>เบอร์โทรผู้ดูแล</label><input type="text" id="p_phone"></div>
-        </div>
-        <div class="field"><label>หมายเหตุ</label><textarea id="p_note"></textarea></div>
-        <div class="field">
-          <label>📷 รูปถ่ายผู้สูงอายุ/บ้านพัก</label>
-          <input type="file" id="p_photoFile" accept="image/*">
-          <div class="photo-preview-wrap" id="p_photoPreviewWrap"></div>
-          <div class="upload-status" id="p_uploadStatus"></div>
-        </div>
-        <div class="toolbar">
-          <button type="submit" class="btn btn-primary" id="p_submitBtn">💾 บันทึก</button>
-          <button type="button" class="btn btn-secondary" onclick="resetPatientForm()">ล้างฟอร์ม</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="card">
-      <h2>รายชื่อผู้สูงอายุทั้งหมด</h2>
-      <div class="toolbar">
-        <input type="text" class="search-box" id="patientSearch" placeholder="ค้นหาชื่อ, หมู่บ้าน, เลขบัตร..." oninput="renderPatients()">
-        <select id="filterType" onchange="renderPatients()">
-          <option value="">ทุกประเภท</option>
-          <option value="ติดสังคม">ติดสังคม</option>
-          <option value="ติดบ้าน">ติดบ้าน</option>
-          <option value="ติดเตียง">ติดเตียง</option>
-        </select>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>รูป</th><th>ชื่อ-สกุล</th><th>อายุ</th><th>ที่อยู่</th><th>ประเภท</th><th>ผู้ดูแล</th><th class="no-print">จัดการ</th></tr></thead>
-          <tbody id="patientsBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- VISITS -->
-  <div id="visits" class="tab-content">
-    <div class="card">
-      <h2 id="visitFormTitle">บันทึกการเยี่ยมบ้านใหม่</h2>
-      <form id="visitForm">
-        <input type="hidden" id="v_id">
-        <input type="hidden" id="v_photoUrl">
-        <div class="form-grid">
-          <div class="field"><label>เลือกผู้สูงอายุ *</label><select id="v_patient" required></select></div>
-          <div class="field"><label>วันที่เยี่ยม *</label><input type="date" id="v_date" required></div>
-          <div class="field"><label>ผู้เยี่ยม (จนท./อสม.)</label><input type="text" id="v_visitor"></div>
-          <div class="field"><label>ความดันโลหิต (BP)</label><input type="text" id="v_bp" placeholder="เช่น 120/80"></div>
-          <div class="field"><label>ชีพจร (PR)</label><input type="number" id="v_pr"></div>
-          <div class="field"><label>อุณหภูมิ (°C)</label><input type="number" step="0.1" id="v_temp"></div>
-          <div class="field"><label>น้ำตาลปลายนิ้ว (DTX)</label><input type="number" id="v_dtx"></div>
-          <div class="field"><label>คะแนน ADL (0-20)</label><input type="number" id="v_adl" min="0" max="20"></div>
-          <div class="field"><label>วันนัดเยี่ยมครั้งถัดไป</label><input type="date" id="v_nextdate"></div>
-        </div>
-        <div class="field"><label>ปัญหา/อาการที่พบ</label><textarea id="v_problem"></textarea></div>
-        <div class="field"><label>การช่วยเหลือ/พยาบาลที่ให้</label><textarea id="v_help"></textarea></div>
-        <div class="field"><label>แผนการดูแลครั้งถัดไป</label><textarea id="v_plan"></textarea></div>
-        <div class="field">
-          <label>📷 รูปถ่ายระหว่างเยี่ยม (เช่น สภาพแผล, สภาพอาการ)</label>
-          <input type="file" id="v_photoFile" accept="image/*">
-          <div class="photo-preview-wrap" id="v_photoPreviewWrap"></div>
-          <div class="upload-status" id="v_uploadStatus"></div>
-        </div>
-        <div class="toolbar">
-          <button type="submit" class="btn btn-primary" id="v_submitBtn">💾 บันทึกการเยี่ยม</button>
-          <button type="button" class="btn btn-secondary" onclick="resetVisitForm()">ล้างฟอร์ม</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="card">
-      <h2>ประวัติการเยี่ยมบ้าน</h2>
-      <div class="toolbar">
-        <select id="visitFilterPatient" onchange="renderVisits()"><option value="">-- ผู้สูงอายุทั้งหมด --</option></select>
-        <input type="date" id="visitFilterFrom" onchange="renderVisits()">
-        <span>ถึง</span>
-        <input type="date" id="visitFilterTo" onchange="renderVisits()">
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>รูป</th><th>วันที่</th><th>ผู้สูงอายุ</th><th>ADL</th><th>BP/PR/T</th><th>ปัญหาที่พบ</th><th>ผู้เยี่ยม</th><th class="no-print">จัดการ</th></tr></thead>
-          <tbody id="visitsBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- REPORTS -->
-  <div id="reports" class="tab-content">
-    <div class="card">
-      <h2>ส่งออกและพิมพ์รายงาน</h2>
-      <p>ส่งออกข้อมูลทั้งหมดเพื่อสำรอง หรือนำไปวิเคราะห์ต่อใน Excel</p>
-      <div class="toolbar">
-        <button class="btn btn-primary" onclick="exportPatientsCSV()">⬇️ ส่งออกทะเบียนผู้สูงอายุ (CSV)</button>
-        <button class="btn btn-primary" onclick="exportVisitsCSV()">⬇️ ส่งออกบันทึกการเยี่ยม (CSV)</button>
-        <button class="btn btn-secondary" onclick="window.print()">🖨️ พิมพ์หน้านี้</button>
-        <button class="btn btn-danger" onclick="clearAllData()">🗑️ ล้างข้อมูลทั้งหมด</button>
-      </div>
-    </div>
-    <div class="card">
-      <h2>สรุปจำนวนตามหมู่บ้าน/ประเภท</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>ที่อยู่/หมู่บ้าน</th><th>ติดสังคม</th><th>ติดบ้าน</th><th>ติดเตียง</th><th>รวม</th></tr></thead>
-          <tbody id="summaryBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-</main>
-
-<footer>ระบบบันทึกข้อมูลผู้สูงอายุที่มีภาวะพึ่งพิง | รพ.สต.บ้านทับสอ อ.เมืองสกลนคร จ.สกลนคร | ข้อมูลจัดเก็บบน Firebase (ltc-05446) + รูปภาพเก็บบน ImgBB</footer>
-
-<div class="lightbox" id="lightbox" onclick="this.classList.remove('show')">
-  <img id="lightboxImg" src="">
-</div>
-
-<!-- Firebase SDK -->
+<!-- Libraries -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/prop-types@15/prop-types.min.js"></script>
+<script crossorigin src="https://unpkg.com/recharts@2.12.7/umd/Recharts.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.production.min.js"></script>
+<script src="https://unpkg.com/lucide@0.368.0/dist/umd/lucide.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script>
-// 🔑 ใส่ apiKey ตัวจริงแทนตรงนี้ (ก็อปจาก Firebase Console -> Project settings)
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" data-type="module">
+/* =========================================================================
+   config/env.js  —  ตั้งค่าเชื่อมต่อภายนอก
+   ========================================================================= */
 const firebaseConfig = {
   apiKey: "ใส่ apiKey ตัวจริงของคุณตรงนี้",
   authDomain: "ltc-05446.firebaseapp.com",
@@ -256,438 +65,1848 @@ const firebaseConfig = {
   appId: "1:927865454515:web:5d9983ea81df23d1f8d5c6",
   measurementId: "G-T9F34CWE8T"
 };
-
-// 🔑 ImgBB API Key สำหรับเก็บรูปภาพ
 const IMGBB_API_KEY = "6d050ff0baa662110ba2ca12c7247555";
+const ORG = { name: "รพ.สต.บ้านทับสอ", area: "อำเภอเมืองสกลนคร จังหวัดสกลนคร" };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const patientsCol = db.collection('patients');
-const visitsCol = db.collection('visits');
+let db = null, firebaseReady = false;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  firebaseReady = true;
+} catch (e) { console.warn('Firebase init failed:', e.message); }
 
-let patients = [];
-let visits = [];
+const { useState, useEffect, useMemo, useCallback, createContext, useContext } = React;
+const { HashRouter, Routes, Route, NavLink, Link, Navigate, Outlet, useParams, useLocation, useNavigate } = ReactRouterDOM;
+const { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
 
-// ---------- IMGBB UPLOAD ----------
-async function uploadToImgBB(file, statusElId){
-  const statusEl = document.getElementById(statusElId);
-  statusEl.textContent = '⏳ กำลังอัปโหลดรูปภาพ...';
-  statusEl.className = 'upload-status';
-  const formData = new FormData();
-  formData.append('image', file);
-  const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-    method: 'POST',
-    body: formData
-  });
-  const data = await res.json();
-  if(!data.success){ throw new Error(data.error?.message || 'อัปโหลดรูปภาพไม่สำเร็จ'); }
-  statusEl.textContent = '✅ อัปโหลดรูปภาพสำเร็จ';
-  return data.data.url; // ลิงก์รูปถาวรบน ImgBB
+/* =========================================================================
+   utils/format.js
+   ========================================================================= */
+const THAI_MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+function toThaiDate(value) {
+  if (!value) return '-';
+  if (typeof value === 'string' && /[ก-๙]/.test(value)) return value;
+  const d = typeof value === 'string' ? new Date(value) : value;
+  if (isNaN(d)) return '-';
+  return `${d.getDate()} ${THAI_MONTHS[d.getMonth()]} ${d.getFullYear() + 543}`;
+}
+function maskNid(nid) {
+  if (!nid) return '-';
+  const n = String(nid).replace(/\D/g, '');
+  if (n.length !== 13) return nid;
+  return `${n[0]}-${n.slice(1,5)}-XXXXX-${n.slice(10,12)}-${n[12]}`;
+}
+function adlGroup(adl) {
+  const n = Number(adl);
+  if (isNaN(n)) return 'ติดสังคม';
+  if (n <= 4) return 'ติดเตียง';
+  if (n <= 11) return 'ติดบ้าน';
+  return 'ติดสังคม';
 }
 
-function showPhotoPreview(wrapId, url){
-  const wrap = document.getElementById(wrapId);
-  if(!url){ wrap.innerHTML=''; return; }
-  wrap.innerHTML = `<img src="${url}" class="photo-preview" onclick="openLightbox('${url}')">`;
+/* =========================================================================
+   data/mockData.js  —  ข้อมูลตัวอย่างภาษาไทย
+   ========================================================================= */
+const villages = ['หมู่ 1 บ้านทับสอ','หมู่ 2 บ้านทับสอเหนือ','หมู่ 3 บ้านนาสีนวล','หมู่ 4 บ้านโพนสวาง','หมู่ 5 บ้านหนองผือ','หมู่ 6 บ้านโนนสะอาด'];
+
+const mockDashboard = { totalElderly:248, homebound:76, bedridden:32, cmCount:8, cgCount:45, visited:186, target:220, pending:34, urgent:5 };
+
+const monthlyVisitChart = [
+  { month:'ส.ค. 68', เป้าหมาย:210, เยี่ยมจริง:195 },
+  { month:'ก.ย. 68', เป้าหมาย:215, เยี่ยมจริง:200 },
+  { month:'ต.ค. 68', เป้าหมาย:215, เยี่ยมจริง:205 },
+  { month:'พ.ย. 68', เป้าหมาย:220, เยี่ยมจริง:198 },
+  { month:'ธ.ค. 68', เป้าหมาย:220, เยี่ยมจริง:210 },
+  { month:'ม.ค. 69', เป้าหมาย:220, เยี่ยมจริง:186 },
+];
+
+const mockCM = [
+  { id:'cm1', code:'CM-001', name:'นางสาวปิยะดา ศรีสมบัติ', role:'CM', position:'พยาบาลวิชาชีพชำนาญการ', phone:'081-234-5671', area:'หมู่ 1-2', elderlyCount:32, visitsThisMonth:28, status:'ปฏิบัติงาน' },
+  { id:'cm2', code:'CM-002', name:'นายอนุชา วงศ์ษา', role:'CM', position:'นักวิชาการสาธารณสุข', phone:'081-234-5672', area:'หมู่ 3-4', elderlyCount:30, visitsThisMonth:25, status:'ปฏิบัติงาน' },
+  { id:'cm3', code:'CM-003', name:'นางศิริพร ไชยวงศ์', role:'CM', position:'พยาบาลวิชาชีพ', phone:'081-234-5673', area:'หมู่ 5-6', elderlyCount:28, visitsThisMonth:22, status:'ปฏิบัติงาน' },
+  { id:'cm4', code:'CM-004', name:'นายวีระพงษ์ นามวงศ์', role:'CM', position:'นักวิชาการสาธารณสุข', phone:'081-234-5674', area:'หมู่ 1, 3', elderlyCount:26, visitsThisMonth:20, status:'ระงับการใช้งาน' },
+];
+
+const mockCG = [
+  { id:'cg1', code:'CG-001', name:'นางสมหญิง ทองดี', role:'CG', position:'ผู้ดูแลผู้สูงอายุ (70 ชม.)', phone:'089-111-2221', area:'หมู่ 1', elderlyCount:8, visitsThisMonth:15, status:'ปฏิบัติงาน' },
+  { id:'cg2', code:'CG-002', name:'นายประสิทธิ์ แสงจันทร์', role:'CG', position:'ผู้ดูแลผู้สูงอายุ (420 ชม.)', phone:'089-111-2222', area:'หมู่ 2', elderlyCount:7, visitsThisMonth:14, status:'ปฏิบัติงาน' },
+  { id:'cg3', code:'CG-003', name:'นางสาวรัตนา บุญมี', role:'CG', position:'ผู้ดูแลผู้สูงอายุ (70 ชม.)', phone:'089-111-2223', area:'หมู่ 3', elderlyCount:9, visitsThisMonth:16, status:'ปฏิบัติงาน' },
+  { id:'cg4', code:'CG-004', name:'นายสมชาย ใจดี', role:'CG', position:'ผู้ดูแลผู้สูงอายุ (70 ชม.)', phone:'089-111-2224', area:'หมู่ 4', elderlyCount:6, visitsThisMonth:10, status:'ปฏิบัติงาน' },
+  { id:'cg5', code:'CG-005', name:'นางบุญเรือน คำแก้ว', role:'CG', position:'ผู้ดูแลผู้สูงอายุ (420 ชม.)', phone:'089-111-2225', area:'หมู่ 5-6', elderlyCount:10, visitsThisMonth:18, status:'ปฏิบัติงาน' },
+];
+
+const mockElderly = [
+  { id:'m1', hn:'HN-00231', nationalId:'1-2345-XXXXX-12-3', name:'นายบุญมี แสนสุข', age:78, gender:'ชาย', village:'หมู่ 1 บ้านทับสอ', adl:6, group:'ติดบ้าน', diseases:'เบาหวาน, ความดันโลหิตสูง', allergies:'ไม่มี', cm:'นางสาวปิยะดา ศรีสมบัติ', cg:'นางสมหญิง ทองดี', lastVisit:'3 มกราคม 2569', nextVisit:'17 มกราคม 2569', visitStatus:'รอเยี่ยม', urgency:'ปกติ', phone:'081-555-0101', caregiverName:'นางสาวอรทัย แสนสุข (บุตรสาว)', photoUrl:'' },
+  { id:'m2', hn:'HN-00187', nationalId:'1-2345-XXXXX-45-6', name:'นางคำปุ่น วิเศษ', age:82, gender:'หญิง', village:'หมู่ 2 บ้านทับสอเหนือ', adl:2, group:'ติดเตียง', diseases:'อัมพาตครึ่งซีก, แผลกดทับระดับ 2', allergies:'แพ้เพนนิซิลลิน', cm:'นางสาวปิยะดา ศรีสมบัติ', cg:'นายประสิทธิ์ แสงจันทร์', lastVisit:'5 มกราคม 2569', nextVisit:'12 มกราคม 2569', visitStatus:'เกินกำหนด', urgency:'เร่งด่วน', phone:'081-555-0102', caregiverName:'นายสุรชัย วิเศษ (บุตรชาย)', photoUrl:'' },
+  { id:'m3', hn:'HN-00298', nationalId:'1-2345-XXXXX-78-9', name:'นายสมพงษ์ ทองอินทร์', age:70, gender:'ชาย', village:'หมู่ 3 บ้านนาสีนวล', adl:18, group:'ติดสังคม', diseases:'ไม่มี', allergies:'ไม่มี', cm:'นายอนุชา วงศ์ษา', cg:'นางสาวรัตนา บุญมี', lastVisit:'8 มกราคม 2569', nextVisit:'8 กุมภาพันธ์ 2569', visitStatus:'เยี่ยมแล้ว', urgency:'ปกติ', phone:'081-555-0103', caregiverName:'นางมาลี ทองอินทร์ (ภรรยา)', photoUrl:'' },
+  { id:'m4', hn:'HN-00156', nationalId:'1-2345-XXXXX-33-1', name:'นางทองม้วน ศรีวิไล', age:85, gender:'หญิง', village:'หมู่ 4 บ้านโพนสวาง', adl:4, group:'ติดเตียง', diseases:'เบาหวาน, ไตวายเรื้อรังระยะ 4', allergies:'ไม่มี', cm:'นายอนุชา วงศ์ษา', cg:'นายสมชาย ใจดี', lastVisit:'2 มกราคม 2569', nextVisit:'9 มกราคม 2569', visitStatus:'เกินกำหนด', urgency:'เร่งด่วน', phone:'081-555-0104', caregiverName:'นางสาวพิมพ์ใจ ศรีวิไล (หลานสาว)', photoUrl:'' },
+  { id:'m5', hn:'HN-00312', nationalId:'1-2345-XXXXX-90-2', name:'นายสี ดวงมาลา', age:74, gender:'ชาย', village:'หมู่ 5 บ้านหนองผือ', adl:9, group:'ติดบ้าน', diseases:'ความดันโลหิตสูง, ข้อเข่าเสื่อม', allergies:'ไม่มี', cm:'นางศิริพร ไชยวงศ์', cg:'นางบุญเรือน คำแก้ว', lastVisit:'6 มกราคม 2569', nextVisit:'20 มกราคม 2569', visitStatus:'รอเยี่ยม', urgency:'ติดตาม', phone:'081-555-0105', caregiverName:'นางคำพอง ดวงมาลา (ภรรยา)', photoUrl:'' },
+  { id:'m6', hn:'HN-00278', nationalId:'1-2345-XXXXX-21-4', name:'นางหนูจันทร์ ภูวงศ์', age:79, gender:'หญิง', village:'หมู่ 6 บ้านโนนสะอาด', adl:15, group:'ติดสังคม', diseases:'ข้อเข่าเสื่อม', allergies:'ไม่มี', cm:'นางศิริพร ไชยวงศ์', cg:'นางบุญเรือน คำแก้ว', lastVisit:'4 มกราคม 2569', nextVisit:'4 กุมภาพันธ์ 2569', visitStatus:'เยี่ยมแล้ว', urgency:'ปกติ', phone:'081-555-0106', caregiverName:'นายบุญช่วย ภูวงศ์ (สามี)', photoUrl:'' },
+  { id:'m7', hn:'HN-00341', nationalId:'1-2345-XXXXX-55-8', name:'นางบัวไล จันทะวงศ์', age:88, gender:'หญิง', village:'หมู่ 1 บ้านทับสอ', adl:3, group:'ติดเตียง', diseases:'สมองเสื่อม, ปอดอักเสบเรื้อรัง', allergies:'แพ้ซัลฟา', cm:'นางสาวปิยะดา ศรีสมบัติ', cg:'นางสมหญิง ทองดี', lastVisit:'7 มกราคม 2569', nextVisit:'14 มกราคม 2569', visitStatus:'รอเยี่ยม', urgency:'ติดตาม', phone:'081-555-0107', caregiverName:'นางสาวนงลักษณ์ จันทะวงศ์ (บุตรสาว)', photoUrl:'' },
+];
+
+const mockVisits = [
+  { id:'v1', patientId:'m2', patientName:'นางคำปุ่น วิเศษ', date:'2569-01-05', dateLabel:'5 มกราคม 2569', visitType:'เยี่ยมบ้าน', visitor:'นายประสิทธิ์ แสงจันทร์', adl:2, bp:'138/85', problem:'พบแผลกดทับระดับ 2 บริเวณสะโพกด้านขวา', plan:'ทำแผลต่อเนื่องทุก 2 วัน นัดเยี่ยมซ้ำใน 7 วัน', urgency:'เร่งด่วน', photoUrl:'' },
+  { id:'v2', patientId:'m2', patientName:'นางคำปุ่น วิเศษ', date:'2568-12-22', dateLabel:'22 ธันวาคม 2568', visitType:'เยี่ยมบ้าน', visitor:'นางสาวปิยะดา ศรีสมบัติ', adl:3, bp:'130/80', problem:'ญาติดูแลได้ดี ไม่พบภาวะแทรกซ้อน', plan:'ติดตามตามนัดปกติ', urgency:'ปกติ', photoUrl:'' },
+  { id:'v3', patientId:'m1', patientName:'นายบุญมี แสนสุข', date:'2569-01-03', dateLabel:'3 มกราคม 2569', visitType:'เยี่ยมบ้าน', visitor:'นางสมหญิง ทองดี', adl:6, bp:'145/90', problem:'ระดับน้ำตาลในเลือดสูงกว่าเกณฑ์ (DTX 186)', plan:'แนะนำควบคุมอาหาร นัดตรวจซ้ำ 2 สัปดาห์', urgency:'ติดตาม', photoUrl:'' },
+  { id:'v4', patientId:'m4', patientName:'นางทองม้วน ศรีวิไล', date:'2569-01-02', dateLabel:'2 มกราคม 2569', visitType:'เยี่ยมบ้าน', visitor:'นายสมชาย ใจดี', adl:4, bp:'150/95', problem:'บวมบริเวณขาทั้งสองข้าง ปัสสาวะออกน้อย', plan:'ส่งต่อพบแพทย์ รพ.สกลนคร ภายใน 3 วัน', urgency:'เร่งด่วน', photoUrl:'' },
+];
+
+const mockEquipment = [
+  { id:'EQ-001', name:'เตียงลม', type:'เครื่องมือแพทย์', qty:12, minQty:5, status:'พร้อมใช้งาน', location:'คลังกลาง รพ.สต.' },
+  { id:'EQ-002', name:'รถเข็นวีลแชร์', type:'อุปกรณ์ช่วยเคลื่อนย้าย', qty:8, minQty:4, status:'พร้อมใช้งาน', location:'คลังกลาง รพ.สต.' },
+  { id:'EQ-003', name:'เครื่องวัดความดันโลหิต', type:'เครื่องมือแพทย์', qty:3, minQty:5, status:'ใกล้หมด', location:'ห้องเวชภัณฑ์' },
+  { id:'EQ-004', name:'ที่นอนลมป้องกันแผลกดทับ', type:'อุปกรณ์ป้องกันแผลกดทับ', qty:6, minQty:3, status:'กำลังถูกยืม', location:'คลังกลาง รพ.สต.' },
+  { id:'EQ-005', name:'ไม้เท้าสี่ขา', type:'อุปกรณ์ช่วยเดิน', qty:15, minQty:5, status:'พร้อมใช้งาน', location:'คลังกลาง รพ.สต.' },
+  { id:'EQ-006', name:'เครื่องดูดเสมหะ', type:'เครื่องมือแพทย์', qty:2, minQty:2, status:'รอซ่อม', location:'ห้องเวชภัณฑ์' },
+  { id:'EQ-007', name:'ถังออกซิเจนขนาดเล็ก', type:'เครื่องมือแพทย์', qty:4, minQty:2, status:'พร้อมใช้งาน', location:'ห้องเวชภัณฑ์' },
+  { id:'EQ-008', name:'แผ่นรองซับผู้ใหญ่', type:'วัสดุสิ้นเปลือง', qty:28, minQty:50, status:'ใกล้หมด', location:'คลังกลาง รพ.สต.' },
+];
+
+const mockEquipmentMoves = [
+  { id:'mv1', date:'8 มกราคม 2569', item:'ที่นอนลมป้องกันแผลกดทับ', action:'ยืม', qty:1, receiver:'นางคำปุ่น วิเศษ', by:'นายประสิทธิ์ แสงจันทร์' },
+  { id:'mv2', date:'5 มกราคม 2569', item:'รถเข็นวีลแชร์', action:'คืน', qty:1, receiver:'นายสมพงษ์ ทองอินทร์', by:'นางสาวรัตนา บุญมี' },
+  { id:'mv3', date:'3 มกราคม 2569', item:'เครื่องดูดเสมหะ', action:'ส่งซ่อม', qty:1, receiver:'-', by:'นางสมหญิง จันทร์เพ็ญ' },
+  { id:'mv4', date:'2 มกราคม 2569', item:'แผ่นรองซับผู้ใหญ่', action:'เบิกจ่าย', qty:20, receiver:'นางทองม้วน ศรีวิไล', by:'นายสมชาย ใจดี' },
+];
+
+const mockUsers = [
+  { id:'u1', name:'นางสมหญิง จันทร์เพ็ญ', username:'somying.j', email:'somying.j@moph.go.th', phone:'081-900-1001', role:'ผู้ดูแลระบบ', area:'รพ.สต.บ้านทับสอ', lastLogin:'9 มกราคม 2569 08:30 น.', status:'ใช้งาน' },
+  { id:'u2', name:'นางสาวปิยะดา ศรีสมบัติ', username:'piyada.s', email:'piyada.s@moph.go.th', phone:'081-234-5671', role:'Care Manager (CM)', area:'หมู่ 1-2', lastLogin:'9 มกราคม 2569 07:45 น.', status:'ใช้งาน' },
+  { id:'u3', name:'นางสมหญิง ทองดี', username:'somying.t', email:'somying.t@moph.go.th', phone:'089-111-2221', role:'Caregiver (CG)', area:'หมู่ 1', lastLogin:'8 มกราคม 2569 16:10 น.', status:'ใช้งาน' },
+  { id:'u4', name:'นายวีระพงษ์ นามวงศ์', username:'weeraphong.n', email:'weeraphong.n@moph.go.th', phone:'081-234-5674', role:'Care Manager (CM)', area:'หมู่ 1, 3', lastLogin:'2 มกราคม 2569 09:00 น.', status:'ระงับการใช้งาน' },
+  { id:'u5', name:'นางสาวศศิธร แก้วมณี', username:'sasithorn.k', email:'sasithorn.k@moph.go.th', phone:'082-777-3210', role:'ผู้ดูรายงาน', area:'รพ.สต.บ้านทับสอ', lastLogin:'7 มกราคม 2569 13:20 น.', status:'ใช้งาน' },
+  { id:'u6', name:'นายธนกฤต พิมพ์ทอง', username:'thanakrit.p', email:'thanakrit.p@moph.go.th', phone:'083-444-5566', role:'เจ้าหน้าที่ รพ.สต.', area:'รพ.สต.บ้านทับสอ', lastLogin:'9 มกราคม 2569 09:15 น.', status:'ใช้งาน' },
+];
+
+const ROLES = ['ผู้ดูแลระบบ','Care Manager (CM)','Caregiver (CG)','เจ้าหน้าที่ รพ.สต.','ผู้ดูรายงาน'];
+
+const reportTypes = [
+  { id:'r1', title:'รายงานจำนวนผู้สูงอายุตามระดับการพึ่งพิง', icon:'PieChart', chart:'pie' },
+  { id:'r2', title:'รายงานผลงานการเยี่ยมรายเดือน', icon:'BarChart3', chart:'bar' },
+  { id:'r3', title:'รายงานผลงานแยกตาม CM', icon:'UserCog', chart:'staff' },
+  { id:'r4', title:'รายงานผลงานแยกตาม CG', icon:'HeartHandshake', chart:'staff' },
+  { id:'r5', title:'รายงานผู้สูงอายุที่เกินกำหนดเยี่ยม', icon:'CalendarX', chart:'bar' },
+  { id:'r6', title:'รายงานผู้สูงอายุที่มีความเสี่ยง', icon:'AlertTriangle', chart:'bar' },
+  { id:'r7', title:'รายงานวัสดุอุปกรณ์คงเหลือ', icon:'Package', chart:'equipment' },
+];
+
+/* =========================================================================
+   services/api.js  —  Service Layer (Firestore + Mock, พร้อมต่อ REST API จริง)
+   ========================================================================= */
+const BASE_URL = ''; // ใส่ endpoint จริงในอนาคต เช่น 'https://api.ltc-thubsor.go.th'
+
+function normalizeElderly(id, d) {
+  const adl = d.adl !== undefined && d.adl !== '' ? Number(d.adl) : null;
+  return {
+    id,
+    hn: d.hn || ('HN-' + String(id).slice(-5).toUpperCase()),
+    nationalId: d.nationalId || maskNid(d.nid),
+    name: d.name || '-',
+    age: d.age || '-',
+    gender: d.gender || '-',
+    village: d.village || d.address || '-',
+    adl: adl !== null ? adl : '-',
+    group: d.group || d.type || (adl !== null ? adlGroup(adl) : 'ติดสังคม'),
+    diseases: d.diseases || d.disease || 'ไม่มี',
+    allergies: d.allergies || 'ไม่มี',
+    cm: d.cm || '-',
+    cg: d.cg || d.caregiver || '-',
+    caregiverName: d.caregiverName || d.caregiver || '-',
+    phone: d.phone || '-',
+    lastVisit: d.lastVisit || '-',
+    nextVisit: d.nextVisit || '-',
+    visitStatus: d.visitStatus || 'รอเยี่ยม',
+    urgency: d.urgency || 'ปกติ',
+    photoUrl: d.photoUrl || '',
+    note: d.note || '',
+    _raw: d,
+  };
 }
 
-function openLightbox(url){
-  document.getElementById('lightboxImg').src = url;
-  document.getElementById('lightbox').classList.add('show');
-}
-
-// ---------- CONNECTION STATUS ----------
-const connEl = document.getElementById('connStatus');
-function setConnected(){ connEl.textContent = '🟢 เชื่อมต่อฐานข้อมูลสำเร็จ'; connEl.className='conn-ok'; }
-function setError(msg){ connEl.textContent = '🔴 เชื่อมต่อผิดพลาด: '+msg; connEl.className='conn-bad'; }
-
-// ---------- REALTIME LISTENERS ----------
-patientsCol.onSnapshot(snapshot=>{
-  patients = snapshot.docs.map(d=>({ id:d.id, ...d.data() }));
-  setConnected();
-  populatePatientSelects();
-  renderPatients();
-  renderDashboard();
-  renderSummary();
-}, err=> setError(err.message));
-
-visitsCol.onSnapshot(snapshot=>{
-  visits = snapshot.docs.map(d=>({ id:d.id, ...d.data() }));
-  setConnected();
-  renderVisits();
-  renderDashboard();
-}, err=> setError(err.message));
-
-// ---------- NAV ----------
-function showTab(name){
-  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-  document.getElementById(name).classList.add('active');
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.tab-btn[data-tab="'+name+'"]').classList.add('active');
-  if(name==='dashboard') renderDashboard();
-  if(name==='patients') renderPatients();
-  if(name==='visits'){ populatePatientSelects(); renderVisits(); }
-  if(name==='reports') renderSummary();
-}
-
-// ---------- PATIENTS ----------
-document.getElementById('patientForm').addEventListener('submit', async function(e){
-  e.preventDefault();
-  const submitBtn = document.getElementById('p_submitBtn');
-  submitBtn.disabled = true;
-  try{
-    let photoUrl = document.getElementById('p_photoUrl').value || '';
-    const fileInput = document.getElementById('p_photoFile');
-    if(fileInput.files && fileInput.files[0]){
-      photoUrl = await uploadToImgBB(fileInput.files[0], 'p_uploadStatus');
-    }
-    const id = document.getElementById('p_id').value;
-    const patient = {
-      nid: document.getElementById('p_nid').value.trim(),
-      name: document.getElementById('p_name').value.trim(),
-      age: document.getElementById('p_age').value,
-      gender: document.getElementById('p_gender').value,
-      address: document.getElementById('p_address').value.trim(),
-      type: document.getElementById('p_type').value,
-      disease: document.getElementById('p_disease').value.trim(),
-      caregiver: document.getElementById('p_caregiver').value.trim(),
-      phone: document.getElementById('p_phone').value.trim(),
-      note: document.getElementById('p_note').value.trim(),
-      photoUrl: photoUrl,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-    if(id){ await patientsCol.doc(id).update(patient); }
-    else{ patient.createdAt = firebase.firestore.FieldValue.serverTimestamp(); await patientsCol.add(patient); }
-    resetPatientForm();
-    alert('บันทึกข้อมูลผู้สูงอายุเรียบร้อย');
-  }catch(err){
-    document.getElementById('p_uploadStatus').textContent = '❌ '+err.message;
-    document.getElementById('p_uploadStatus').className = 'upload-status err';
-    alert('บันทึกไม่สำเร็จ: '+err.message);
-  }finally{
-    submitBtn.disabled = false;
-  }
-});
-
-function resetPatientForm(){
-  document.getElementById('patientForm').reset();
-  document.getElementById('p_id').value='';
-  document.getElementById('p_photoUrl').value='';
-  document.getElementById('p_uploadStatus').textContent='';
-  showPhotoPreview('p_photoPreviewWrap', '');
-  document.getElementById('patientFormTitle').textContent='เพิ่มผู้สูงอายุใหม่';
-}
-
-function editPatient(id){
-  const p = patients.find(x=>x.id===id);
-  if(!p) return;
-  document.getElementById('p_id').value=p.id;
-  document.getElementById('p_nid').value=p.nid||'';
-  document.getElementById('p_name').value=p.name||'';
-  document.getElementById('p_age').value=p.age||'';
-  document.getElementById('p_gender').value=p.gender||'ชาย';
-  document.getElementById('p_address').value=p.address||'';
-  document.getElementById('p_type').value=p.type||'ติดสังคม';
-  document.getElementById('p_disease').value=p.disease||'';
-  document.getElementById('p_caregiver').value=p.caregiver||'';
-  document.getElementById('p_phone').value=p.phone||'';
-  document.getElementById('p_note').value=p.note||'';
-  document.getElementById('p_photoUrl').value=p.photoUrl||'';
-  showPhotoPreview('p_photoPreviewWrap', p.photoUrl||'');
-  document.getElementById('p_uploadStatus').textContent='';
-  document.getElementById('patientFormTitle').textContent='แก้ไขข้อมูล: '+p.name;
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-async function deletePatient(id){
-  if(!confirm('ยืนยันการลบข้อมูลผู้สูงอายุนี้? (ประวัติการเยี่ยมที่เกี่ยวข้องจะถูกลบด้วย)')) return;
-  try{
-    const relatedVisits = await visitsCol.where('patientId','==',id).get();
+const elderlyService = {
+  subscribe(cb, onError) {
+    if (!firebaseReady) { cb(mockElderly, 'mock'); return () => {}; }
+    return db.collection('patients').onSnapshot(
+      snap => {
+        const list = snap.docs.map(d => normalizeElderly(d.id, d.data()));
+        cb(list.length ? list : mockElderly, list.length ? 'firestore' : 'mock');
+      },
+      err => { onError && onError(err); cb(mockElderly, 'mock'); }
+    );
+  },
+  create: (data) => db.collection('patients').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() }),
+  update: (id, data) => db.collection('patients').doc(id).update({ ...data, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }),
+  remove: async (id) => {
+    const rel = await db.collection('visits').where('patientId','==',id).get();
     const batch = db.batch();
-    relatedVisits.forEach(doc=> batch.delete(doc.ref));
-    batch.delete(patientsCol.doc(id));
-    await batch.commit();
-  }catch(err){ alert('ลบไม่สำเร็จ: '+err.message); }
-}
+    rel.forEach(d => batch.delete(d.ref));
+    batch.delete(db.collection('patients').doc(id));
+    return batch.commit();
+  },
+};
 
-function typeBadge(type){
-  if(type==='ติดสังคม') return '<span class="badge badge-social">ติดสังคม</span>';
-  if(type==='ติดบ้าน') return '<span class="badge badge-home">ติดบ้าน</span>';
-  return '<span class="badge badge-bed">ติดเตียง</span>';
-}
+const visitService = {
+  subscribe(cb, onError) {
+    if (!firebaseReady) { cb(mockVisits, 'mock'); return () => {}; }
+    return db.collection('visits').onSnapshot(
+      snap => {
+        const list = snap.docs.map(d => ({ id:d.id, ...d.data(), dateLabel: toThaiDate(d.data().date) }));
+        cb(list.length ? list : mockVisits, list.length ? 'firestore' : 'mock');
+      },
+      err => { onError && onError(err); cb(mockVisits, 'mock'); }
+    );
+  },
+  create: (data) => db.collection('visits').add({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() }),
+  remove: (id) => db.collection('visits').doc(id).delete(),
+};
 
-function thumbCell(url){
-  if(!url) return '-';
-  return `<img src="${url}" class="thumb" onclick="openLightbox('${url}')">`;
-}
+const staffService   = { getCM: async () => mockCM, getCG: async () => mockCG, getById: async (id) => [...mockCM, ...mockCG].find(s => s.id === id) };
+const equipmentService = { getAll: async () => mockEquipment, getMoves: async () => mockEquipmentMoves, borrow: async (d) => ({ ok:true, data:d }) };
+const userService    = { getAll: async () => mockUsers, save: async (d) => ({ ok:true, data:d }) };
+const reportService  = { generate: async (type, filters) => ({ type, filters, ok:true }) };
 
-function renderPatients(){
-  const search = (document.getElementById('patientSearch')?.value||'').toLowerCase();
-  const filterType = document.getElementById('filterType')?.value||'';
-  const body = document.getElementById('patientsBody');
-  let list = patients.filter(p=>{
-    const matchSearch = !search || ((p.name||'')+(p.address||'')+(p.nid||'')).toLowerCase().includes(search);
-    const matchType = !filterType || p.type===filterType;
-    return matchSearch && matchType;
+const uploadService = {
+  async toImgBB(file, onProgress) {
+    onProgress && onProgress('uploading');
+    const fd = new FormData();
+    fd.append('image', file);
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method:'POST', body:fd });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error?.message || 'อัปโหลดรูปภาพไม่สำเร็จ');
+    onProgress && onProgress('done');
+    return { url: json.data.url, thumb: json.data.thumb?.url || json.data.url, deleteUrl: json.data.delete_url };
+  },
+};
+
+/* =========================================================================
+   components/Icon.jsx  —  Lucide wrapper
+   ========================================================================= */
+function camelAttrs(attrs) {
+  const out = {};
+  Object.keys(attrs || {}).forEach(k => {
+    const key = k.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    out[key === 'class' ? 'className' : key] = attrs[k];
   });
-  if(list.length===0){
-    body.innerHTML = '<tr><td colspan="7" class="empty-msg">ยังไม่มีข้อมูล หรือไม่พบผลการค้นหา</td></tr>';
-    return;
-  }
-  body.innerHTML = list.map(p=>`
-    <tr>
-      <td>${thumbCell(p.photoUrl)}</td>
-      <td><b>${p.name}</b>${p.disease?'<br><small style="color:#777">'+p.disease+'</small>':''}</td>
-      <td>${p.age||'-'}</td>
-      <td>${p.address||'-'}</td>
-      <td>${typeBadge(p.type)}</td>
-      <td>${p.caregiver||'-'}${p.phone?'<br><small>'+p.phone+'</small>':''}</td>
-      <td class="actions no-print">
-        <button class="btn btn-secondary btn-small" onclick="goToVisitHistory('${p.id}')">ประวัติเยี่ยม</button><br>
-        <button class="btn btn-secondary btn-small" onclick="editPatient('${p.id}')">แก้ไข</button>
-        <button class="btn btn-danger btn-small" onclick="deletePatient('${p.id}')">ลบ</button>
-      </td>
-    </tr>
-  `).join('');
+  return out;
+}
+function Icon({ name, className = 'w-5 h-5', strokeWidth = 2 }) {
+  const node = (window.lucide && (lucide.icons?.[name] || lucide[name])) || null;
+  if (!node || !Array.isArray(node)) return <span className={className} />;
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      {node.map(([tag, attrs], i) => React.createElement(tag, { key:i, ...camelAttrs(attrs) }))}
+    </svg>
+  );
 }
 
-function goToVisitHistory(patientId){
-  showTab('visits');
-  document.getElementById('visitFilterPatient').value = patientId;
-  renderVisits();
+/* =========================================================================
+   context/ToastContext.jsx
+   ========================================================================= */
+const ToastCtx = createContext(null);
+const useToast = () => useContext(ToastCtx);
+
+function ToastProvider({ children }) {
+  const [items, setItems] = useState([]);
+  const showToast = useCallback((message, type = 'success') => {
+    const id = Date.now() + Math.random();
+    setItems(t => [...t, { id, message, type }]);
+    setTimeout(() => setItems(t => t.filter(x => x.id !== id)), 3800);
+  }, []);
+  const style = { success:'bg-emerald-600', error:'bg-red-600', info:'bg-blue-600', warning:'bg-amber-500' };
+  const icon  = { success:'CircleCheck', error:'CircleX', info:'Info', warning:'TriangleAlert' };
+  return (
+    <ToastCtx.Provider value={{ showToast }}>
+      {children}
+      <div className="fixed bottom-4 right-4 z-[200] flex flex-col gap-2 max-w-[92vw]">
+        {items.map(t => (
+          <div key={t.id} className={`flex items-center gap-2 text-white px-4 py-3 rounded-xl shadow-lg text-sm ${style[t.type]}`}>
+            <Icon name={icon[t.type]} className="w-5 h-5 shrink-0" />
+            <span>{t.message}</span>
+          </div>
+        ))}
+      </div>
+    </ToastCtx.Provider>
+  );
 }
 
-// ---------- VISITS ----------
-function populatePatientSelects(){
-  const opts = patients.map(p=>`<option value="${p.id}">${p.name} (${p.type})</option>`).join('');
-  const vSelect = document.getElementById('v_patient');
-  const fSelect = document.getElementById('visitFilterPatient');
-  const currentFilter = fSelect.value;
-  vSelect.innerHTML = '<option value="">-- เลือกผู้สูงอายุ --</option>' + opts;
-  fSelect.innerHTML = '<option value="">-- ผู้สูงอายุทั้งหมด --</option>' + opts;
-  fSelect.value = currentFilter;
-}
+/* =========================================================================
+   context/DataContext.jsx  —  ศูนย์กลางข้อมูล (Firestore realtime)
+   ========================================================================= */
+const DataCtx = createContext(null);
+const useData = () => useContext(DataCtx);
 
-document.getElementById('visitForm').addEventListener('submit', async function(e){
-  e.preventDefault();
-  const patientId = document.getElementById('v_patient').value;
-  if(!patientId){ alert('กรุณาเลือกผู้สูงอายุ'); return; }
-  const submitBtn = document.getElementById('v_submitBtn');
-  submitBtn.disabled = true;
-  try{
-    let photoUrl = document.getElementById('v_photoUrl').value || '';
-    const fileInput = document.getElementById('v_photoFile');
-    if(fileInput.files && fileInput.files[0]){
-      photoUrl = await uploadToImgBB(fileInput.files[0], 'v_uploadStatus');
-    }
-    const id = document.getElementById('v_id').value;
-    const visit = {
-      patientId,
-      date: document.getElementById('v_date').value,
-      visitor: document.getElementById('v_visitor').value.trim(),
-      bp: document.getElementById('v_bp').value.trim(),
-      pr: document.getElementById('v_pr').value,
-      temp: document.getElementById('v_temp').value,
-      dtx: document.getElementById('v_dtx').value,
-      adl: document.getElementById('v_adl').value,
-      nextdate: document.getElementById('v_nextdate').value,
-      problem: document.getElementById('v_problem').value.trim(),
-      help: document.getElementById('v_help').value.trim(),
-      plan: document.getElementById('v_plan').value.trim(),
-      photoUrl: photoUrl
+function DataProvider({ children }) {
+  const [elderly, setElderly] = useState([]);
+  const [visits, setVisits] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [source, setSource] = useState('loading');
+
+  useEffect(() => {
+    let unsub1 = () => {}, unsub2 = () => {};
+    unsub1 = elderlyService.subscribe((list, src) => { setElderly(list); setSource(src); setLoading(false); },
+      () => setSource('offline'));
+    unsub2 = visitService.subscribe((list) => setVisits(list), () => {});
+    const timer = setTimeout(() => setLoading(false), 4000);
+    return () => { unsub1 && unsub1(); unsub2 && unsub2(); clearTimeout(timer); };
+  }, []);
+
+  const stats = useMemo(() => {
+    if (!elderly.length) return mockDashboard;
+    const bed  = elderly.filter(e => e.group === 'ติดเตียง').length;
+    const home = elderly.filter(e => e.group === 'ติดบ้าน').length;
+    const monthKey = String(new Date().getFullYear() + 543);
+    return {
+      totalElderly: elderly.length,
+      homebound: home,
+      bedridden: bed,
+      cmCount: mockCM.length,
+      cgCount: mockCG.length,
+      visited: visits.length || mockDashboard.visited,
+      target: mockDashboard.target,
+      pending: elderly.filter(e => e.visitStatus === 'รอเยี่ยม').length,
+      urgent: elderly.filter(e => e.urgency === 'เร่งด่วน').length,
     };
-    if(id){ await visitsCol.doc(id).update(visit); }
-    else{ await visitsCol.add(visit); }
-    resetVisitForm();
-    alert('บันทึกการเยี่ยมบ้านเรียบร้อย');
-  }catch(err){
-    document.getElementById('v_uploadStatus').textContent = '❌ '+err.message;
-    document.getElementById('v_uploadStatus').className = 'upload-status err';
-    alert('บันทึกไม่สำเร็จ: '+err.message);
-  }finally{
-    submitBtn.disabled = false;
-  }
-});
+  }, [elderly, visits]);
 
-function resetVisitForm(){
-  document.getElementById('visitForm').reset();
-  document.getElementById('v_id').value='';
-  document.getElementById('v_photoUrl').value='';
-  document.getElementById('v_uploadStatus').textContent='';
-  showPhotoPreview('v_photoPreviewWrap', '');
-  document.getElementById('v_date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('visitFormTitle').textContent='บันทึกการเยี่ยมบ้านใหม่';
+  const pieData = useMemo(() => {
+    const g = { 'ติดสังคม':0, 'ติดบ้าน':0, 'ติดเตียง':0 };
+    elderly.forEach(e => { if (g[e.group] !== undefined) g[e.group]++; });
+    return [
+      { name:'ติดสังคม', value:g['ติดสังคม'], color:'#0F766E' },
+      { name:'ติดบ้าน',  value:g['ติดบ้าน'],  color:'#F59E0B' },
+      { name:'ติดเตียง', value:g['ติดเตียง'], color:'#DC2626' },
+    ];
+  }, [elderly]);
+
+  return (
+    <DataCtx.Provider value={{ elderly, visits, loading, source, stats, pieData }}>
+      {children}
+    </DataCtx.Provider>
+  );
 }
 
-function editVisit(id){
-  const v = visits.find(x=>x.id===id);
-  if(!v) return;
-  showTab('visits');
-  populatePatientSelects();
-  document.getElementById('v_id').value=v.id;
-  document.getElementById('v_patient').value=v.patientId;
-  document.getElementById('v_date').value=v.date;
-  document.getElementById('v_visitor').value=v.visitor||'';
-  document.getElementById('v_bp').value=v.bp||'';
-  document.getElementById('v_pr').value=v.pr||'';
-  document.getElementById('v_temp').value=v.temp||'';
-  document.getElementById('v_dtx').value=v.dtx||'';
-  document.getElementById('v_adl').value=v.adl||'';
-  document.getElementById('v_nextdate').value=v.nextdate||'';
-  document.getElementById('v_problem').value=v.problem||'';
-  document.getElementById('v_help').value=v.help||'';
-  document.getElementById('v_plan').value=v.plan||'';
-  document.getElementById('v_photoUrl').value=v.photoUrl||'';
-  showPhotoPreview('v_photoPreviewWrap', v.photoUrl||'');
-  document.getElementById('v_uploadStatus').textContent='';
-  document.getElementById('visitFormTitle').textContent='แก้ไขบันทึกการเยี่ยม';
-  window.scrollTo({top:0, behavior:'smooth'});
+/* =========================================================================
+   components/ui  —  Reusable Components
+   ========================================================================= */
+const btnVariants = {
+  primary:'bg-primary text-white hover:bg-primary-dark shadow-sm',
+  secondary:'bg-secondary text-white hover:bg-blue-700 shadow-sm',
+  outline:'border border-slate-300 text-slate-700 bg-white hover:bg-slate-50',
+  danger:'bg-red-600 text-white hover:bg-red-700',
+  ghost:'text-slate-600 hover:bg-slate-100',
+  soft:'bg-teal-50 text-primary hover:bg-teal-100',
+};
+const btnSizes = { sm:'px-3 py-2 text-xs', md:'px-4 py-2.5 text-sm', lg:'px-5 py-3 text-base' };
+
+function Button({ children, variant='primary', size='md', icon, className='', ...rest }) {
+  return (
+    <button className={`inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${btnVariants[variant]} ${btnSizes[size]} ${className}`} {...rest}>
+      {icon && <Icon name={icon} className="w-4 h-4 shrink-0" />}
+      {children}
+    </button>
+  );
 }
 
-async function deleteVisit(id){
-  if(!confirm('ยืนยันการลบบันทึกการเยี่ยมนี้?')) return;
-  try{ await visitsCol.doc(id).delete(); }
-  catch(err){ alert('ลบไม่สำเร็จ: '+err.message); }
+function Card({ title, subtitle, action, children, className='', bodyClass='' }) {
+  return (
+    <div className={`bg-white rounded-xl shadow-sm border border-slate-100 ${className}`}>
+      {(title || action) && (
+        <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-3">
+          <div>
+            {title && <h3 className="font-semibold text-slate-800">{title}</h3>}
+            {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
+          </div>
+          {action}
+        </div>
+      )}
+      <div className={`px-5 pb-5 ${!title ? 'pt-5' : ''} ${bodyClass}`}>{children}</div>
+    </div>
+  );
 }
 
-function renderVisits(){
-  const filterPatient = document.getElementById('visitFilterPatient').value;
-  const from = document.getElementById('visitFilterFrom').value;
-  const to = document.getElementById('visitFilterTo').value;
-  const body = document.getElementById('visitsBody');
-  let list = visits.filter(v=>{
-    let ok = true;
-    if(filterPatient) ok = ok && v.patientId===filterPatient;
-    if(from) ok = ok && v.date>=from;
-    if(to) ok = ok && v.date<=to;
-    return ok;
-  }).sort((a,b)=> (b.date||'').localeCompare(a.date||''));
-
-  if(list.length===0){
-    body.innerHTML = '<tr><td colspan="8" class="empty-msg">ยังไม่มีบันทึกการเยี่ยม</td></tr>';
-    return;
-  }
-  body.innerHTML = list.map(v=>{
-    const p = patients.find(x=>x.id===v.patientId);
-    return `<tr>
-      <td>${thumbCell(v.photoUrl)}</td>
-      <td>${formatDate(v.date)}</td>
-      <td>${p? p.name : '(ไม่พบข้อมูล)'}</td>
-      <td>${v.adl||'-'}</td>
-      <td>${v.bp||'-'} / ${v.pr||'-'} / ${v.temp||'-'}°C</td>
-      <td>${v.problem||'-'}</td>
-      <td>${v.visitor||'-'}</td>
-      <td class="actions no-print">
-        <button class="btn btn-secondary btn-small" onclick="editVisit('${v.id}')">แก้ไข</button>
-        <button class="btn btn-danger btn-small" onclick="deleteVisit('${v.id}')">ลบ</button>
-      </td>
-    </tr>`;
-  }).join('');
+const statColors = {
+  teal:'bg-teal-50 text-primary', blue:'bg-blue-50 text-secondary', amber:'bg-amber-50 text-amber-600',
+  red:'bg-red-50 text-red-600', green:'bg-emerald-50 text-emerald-600', slate:'bg-slate-100 text-slate-500',
+};
+function StatCard({ icon, label, value, subValue, color='teal' }) {
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 flex items-center gap-3">
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${statColors[color]}`}>
+        <Icon name={icon} className="w-5 h-5" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs text-slate-500 truncate">{label}</p>
+        <p className="text-xl font-bold text-slate-800 leading-tight">{value}</p>
+        {subValue && <p className="text-[11px] text-slate-400">{subValue}</p>}
+      </div>
+    </div>
+  );
 }
 
-function formatDate(d){
-  if(!d) return '-';
-  const [y,m,day] = d.split('-');
-  return `${day}/${m}/${y}`;
+const badgeStyle = {
+  success:'bg-emerald-100 text-emerald-700', warning:'bg-amber-100 text-amber-700',
+  danger:'bg-red-100 text-red-700', info:'bg-blue-100 text-blue-700',
+  neutral:'bg-slate-100 text-slate-600', teal:'bg-teal-100 text-primary',
+};
+const autoType = {
+  'ปกติ':'success','ติดตาม':'warning','เร่งด่วน':'danger',
+  'เยี่ยมแล้ว':'success','รอเยี่ยม':'warning','เกินกำหนด':'danger',
+  'ติดสังคม':'success','ติดบ้าน':'warning','ติดเตียง':'danger',
+  'ปฏิบัติงาน':'success','ระงับการใช้งาน':'neutral','ใช้งาน':'success',
+  'พร้อมใช้งาน':'success','กำลังถูกยืม':'info','รอซ่อม':'danger','ใกล้หมด':'warning',
+};
+function StatusBadge({ label, type }) {
+  const t = type || autoType[label] || 'neutral';
+  return <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap ${badgeStyle[t]}`}>{label}</span>;
 }
 
-// ---------- DASHBOARD ----------
-function renderDashboard(){
-  const total = patients.length;
-  const social = patients.filter(p=>p.type==='ติดสังคม').length;
-  const home = patients.filter(p=>p.type==='ติดบ้าน').length;
-  const bed = patients.filter(p=>p.type==='ติดเตียง').length;
-  const now = new Date();
-  const monthStr = now.toISOString().slice(0,7);
-  const visitsThisMonth = visits.filter(v=>v.date && v.date.startsWith(monthStr)).length;
+function DataTable({ columns, data=[], loading=false, pageSize=8, emptyMessage='ไม่พบข้อมูลตามเงื่อนไขที่เลือก' }) {
+  const [page, setPage] = useState(1);
+  useEffect(() => setPage(1), [data.length]);
+  const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
+  const cur = Math.min(page, totalPages);
+  const rows = data.slice((cur-1)*pageSize, cur*pageSize);
 
-  document.getElementById('statGrid').innerHTML = `
-    <div class="stat-box"><h3>${total}</h3><p>ผู้สูงอายุทั้งหมด</p></div>
-    <div class="stat-box blue"><h3>${social}</h3><p>กลุ่มติดสังคม</p></div>
-    <div class="stat-box orange"><h3>${home}</h3><p>กลุ่มติดบ้าน</p></div>
-    <div class="stat-box red"><h3>${bed}</h3><p>กลุ่มติดเตียง</p></div>
-    <div class="stat-box"><h3>${visitsThisMonth}</h3><p>เยี่ยมเดือนนี้</p></div>
-    <div class="stat-box"><h3>${visits.length}</h3><p>บันทึกเยี่ยมทั้งหมด</p></div>
-  `;
-
-  const recent = [...visits].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,10);
-  const body = document.getElementById('recentVisitsBody');
-  if(recent.length===0){
-    body.innerHTML = '<tr><td colspan="6" class="empty-msg">ยังไม่มีข้อมูลการเยี่ยม</td></tr>';
-  } else {
-    body.innerHTML = recent.map(v=>{
-      const p = patients.find(x=>x.id===v.patientId);
-      return `<tr><td>${thumbCell(v.photoUrl)}</td><td>${formatDate(v.date)}</td><td>${p?p.name:'-'}</td><td>${p?typeBadge(p.type):'-'}</td><td>${v.adl||'-'}</td><td>${v.visitor||'-'}</td></tr>`;
-    }).join('');
-  }
+  return (
+    <div className="border border-slate-100 rounded-xl overflow-hidden bg-white">
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-200">
+              {columns.map(c => <th key={c.key} className="px-4 py-3 text-left font-semibold text-slate-600 whitespace-nowrap">{c.header}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr><td colSpan={columns.length} className="px-4 py-12 text-center text-slate-400">
+                <div className="flex flex-col items-center gap-2"><Icon name="LoaderCircle" className="w-6 h-6 animate-spin" />กำลังโหลดข้อมูล...</div>
+              </td></tr>
+            ) : rows.length === 0 ? (
+              <tr><td colSpan={columns.length} className="px-4 py-12 text-center text-slate-400">
+                <div className="flex flex-col items-center gap-2"><Icon name="Inbox" className="w-8 h-8" />{emptyMessage}</div>
+              </td></tr>
+            ) : rows.map((row, i) => (
+              <tr key={row.id || i} className="border-b border-slate-50 hover:bg-slate-50/70 transition-colors">
+                {columns.map(c => <td key={c.key} className="px-4 py-3 text-slate-700 align-middle whitespace-nowrap">{c.render ? c.render(row) : (row[c.key] ?? '-')}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {!loading && data.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 border-t border-slate-100 text-xs text-slate-500">
+          <span>แสดง {(cur-1)*pageSize+1}–{Math.min(cur*pageSize, data.length)} จากทั้งหมด {data.length} รายการ</span>
+          <div className="flex items-center gap-1">
+            <button disabled={cur===1} onClick={()=>setPage(p=>p-1)} className="p-1.5 rounded-lg border border-slate-200 disabled:opacity-40 hover:bg-slate-100"><Icon name="ChevronLeft" className="w-4 h-4" /></button>
+            <span className="px-3 font-medium">หน้า {cur} / {totalPages}</span>
+            <button disabled={cur===totalPages} onClick={()=>setPage(p=>p+1)} className="p-1.5 rounded-lg border border-slate-200 disabled:opacity-40 hover:bg-slate-100"><Icon name="ChevronRight" className="w-4 h-4" /></button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
-// ---------- REPORTS ----------
-function renderSummary(){
-  const addressMap = {};
-  patients.forEach(p=>{
-    const addr = p.address || 'ไม่ระบุ';
-    if(!addressMap[addr]) addressMap[addr] = {social:0, home:0, bed:0};
-    if(p.type==='ติดสังคม') addressMap[addr].social++;
-    else if(p.type==='ติดบ้าน') addressMap[addr].home++;
-    else addressMap[addr].bed++;
+function Modal({ open, onClose, title, children, footer, size='md' }) {
+  useEffect(() => { document.body.style.overflow = open ? 'hidden' : ''; return () => { document.body.style.overflow=''; }; }, [open]);
+  if (!open) return null;
+  const sizes = { sm:'max-w-md', md:'max-w-2xl', lg:'max-w-4xl' };
+  return (
+    <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/50" onClick={onClose}>
+      <div className={`bg-white w-full ${sizes[size]} rounded-t-2xl sm:rounded-2xl shadow-xl max-h-[92vh] flex flex-col`} onClick={e=>e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+          <h3 className="font-semibold text-slate-800">{title}</h3>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400"><Icon name="X" className="w-5 h-5" /></button>
+        </div>
+        <div className="px-5 py-4 overflow-y-auto">{children}</div>
+        {footer && <div className="px-5 py-4 border-t border-slate-100 flex flex-wrap justify-end gap-2">{footer}</div>}
+      </div>
+    </div>
+  );
+}
+
+function FilterBar({ searchValue, onSearchChange, placeholder='ค้นหา...', children }) {
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 flex flex-wrap gap-3 items-center">
+      {onSearchChange && (
+        <div className="relative flex-1 min-w-[220px]">
+          <Icon name="Search" className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input value={searchValue} onChange={e=>onSearchChange(e.target.value)} placeholder={placeholder} className="input pl-9" />
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+function Field({ label, children, className='' }) {
+  return <div className={className}><label className="lbl">{label}</label>{children}</div>;
+}
+
+function PhotoUploader({ value, onChange, label='อัปโหลดรูปภาพ' }) {
+  const [status, setStatus] = useState('');
+  const { showToast } = useToast();
+  const handle = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setStatus('กำลังอัปโหลดรูปภาพไปยัง ImgBB...');
+      const r = await uploadService.toImgBB(file);
+      onChange(r.url);
+      setStatus('อัปโหลดสำเร็จ');
+      showToast('อัปโหลดรูปภาพเรียบร้อยแล้ว');
+    } catch (err) { setStatus('ผิดพลาด: ' + err.message); showToast(err.message, 'error'); }
+  };
+  return (
+    <div>
+      <label className="lbl">{label}</label>
+      <div className="border-2 border-dashed border-slate-200 rounded-xl p-5 text-center bg-slate-50/50">
+        <Icon name="ImageUp" className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+        <p className="text-xs text-slate-500 mb-3">รองรับไฟล์ JPG, PNG — จัดเก็บบน ImgBB</p>
+        <input type="file" accept="image/*" onChange={handle} className="text-xs mx-auto block w-full max-w-xs" />
+      </div>
+      {status && <p className={`text-xs mt-2 ${status.startsWith('ผิดพลาด') ? 'text-red-600' : 'text-primary'}`}>{status}</p>}
+      {value && <img src={value} alt="preview" className="mt-3 w-28 h-28 object-cover rounded-xl border border-slate-200" />}
+    </div>
+  );
+}
+
+function downloadCSV(filename, rows) {
+  const csv = rows.map(r => r.map(c => `"${String(c ?? '').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF'+csv], { type:'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+}
+
+/* =========================================================================
+   components/Sidebar.jsx & Header.jsx
+   ========================================================================= */
+const MENU = [
+  { path:'/dashboard', label:'Dashboard', icon:'LayoutDashboard' },
+  { path:'/visits',    label:'บันทึกการเยี่ยม', icon:'ClipboardPlus' },
+  { path:'/staff',     label:'จัดการ CM และ CG', icon:'Users' },
+  { path:'/elderly',   label:'จัดการข้อมูลผู้สูงอายุ', icon:'HeartPulse' },
+  { path:'/reports',   label:'รายงาน', icon:'ChartColumnBig' },
+  { path:'/equipment', label:'จัดการวัสดุอุปกรณ์', icon:'Package' },
+  { path:'/users',     label:'จัดการผู้ใช้', icon:'UserCog' },
+  { path:'/settings',  label:'ตั้งค่า', icon:'Settings' },
+];
+
+function Sidebar({ open, onClose }) {
+  const { source } = useData();
+  return (
+    <>
+      {open && <div className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden" onClick={onClose} />}
+      <aside className={`fixed lg:sticky top-0 left-0 h-screen w-64 bg-white border-r border-slate-100 z-50 shrink-0 transition-transform duration-200 lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shrink-0"><Icon name="Stethoscope" className="w-5 h-5 text-white" /></div>
+            <div>
+              <p className="font-bold text-slate-800 text-sm leading-tight">ระบบดูแลผู้สูงอายุ LTC</p>
+              <p className="text-[11px] text-slate-400">{ORG.name}</p>
+            </div>
+          </div>
+          <button className="lg:hidden p-1 text-slate-400" onClick={onClose}><Icon name="X" className="w-5 h-5" /></button>
+        </div>
+        <nav className="p-3 space-y-1 overflow-y-auto h-[calc(100vh-8.5rem)]">
+          {MENU.map(m => (
+            <NavLink key={m.path} to={m.path} onClick={onClose}
+              className={({isActive}) => `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-teal-50 text-primary' : 'text-slate-600 hover:bg-slate-50'}`}>
+              <Icon name={m.icon} className="w-5 h-5 shrink-0" />
+              <span className="truncate">{m.label}</span>
+            </NavLink>
+          ))}
+        </nav>
+        <div className="absolute bottom-0 inset-x-0 p-3 border-t border-slate-100">
+          <div className={`flex items-center gap-2 text-[11px] px-3 py-2 rounded-lg ${source==='firestore' ? 'bg-emerald-50 text-emerald-700' : source==='offline' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-700'}`}>
+            <span className={`w-2 h-2 rounded-full ${source==='firestore' ? 'bg-emerald-500' : source==='offline' ? 'bg-red-500' : 'bg-amber-500'}`} />
+            {source==='firestore' ? 'เชื่อมต่อ Firestore แล้ว' : source==='offline' ? 'เชื่อมต่อฐานข้อมูลไม่ได้' : 'กำลังใช้ข้อมูลตัวอย่าง (Mock)'}
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+function Header({ onMenuClick, breadcrumb, pageTitle }) {
+  const [openProfile, setOpenProfile] = useState(false);
+  const { stats } = useData();
+  return (
+    <header className="sticky top-0 z-30 bg-white border-b border-slate-100">
+      <div className="h-16 flex items-center justify-between px-4 lg:px-6 gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <button className="lg:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-lg" onClick={onMenuClick}><Icon name="Menu" className="w-5 h-5" /></button>
+          <div className="min-w-0">
+            <p className="font-semibold text-slate-800 leading-tight truncate">{ORG.name}</p>
+            <p className="text-[11px] text-slate-400 truncate">{ORG.area}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="relative p-2 text-slate-500 hover:bg-slate-100 rounded-lg">
+            <Icon name="Bell" className="w-5 h-5" />
+            {stats.urgent > 0 && <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 text-[10px] font-bold text-white bg-red-500 rounded-full flex items-center justify-center">{stats.urgent}</span>}
+          </button>
+          <div className="relative">
+            <button onClick={()=>setOpenProfile(o=>!o)} className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-slate-100">
+              <div className="w-9 h-9 rounded-full bg-teal-100 text-primary flex items-center justify-center font-semibold text-sm shrink-0">สญ</div>
+              <div className="hidden md:block text-left">
+                <p className="text-sm font-medium text-slate-700 leading-tight">นางสมหญิง จันทร์เพ็ญ</p>
+                <p className="text-[11px] text-slate-400">ผู้ดูแลระบบ</p>
+              </div>
+              <Icon name="ChevronDown" className="w-4 h-4 text-slate-400 hidden md:block" />
+            </button>
+            {openProfile && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1" onMouseLeave={()=>setOpenProfile(false)}>
+                <button className="w-full text-left px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50">โปรไฟล์ของฉัน</button>
+                <button className="w-full text-left px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50">ตั้งค่าบัญชี</button>
+                <button className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">ออกจากระบบ</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {(breadcrumb || pageTitle) && (
+        <div className="px-4 lg:px-6 pb-3">
+          <p className="text-[11px] text-slate-400 mb-0.5">{breadcrumb}</p>
+          <h1 className="text-lg lg:text-xl font-bold text-slate-800">{pageTitle}</h1>
+        </div>
+      )}
+    </header>
+  );
+}
+
+/* =========================================================================
+   layouts/MainLayout.jsx
+   ========================================================================= */
+const PAGE_META = {
+  '/dashboard':{ t:'ภาพรวมระบบ (Dashboard)', b:'หน้าหลัก / Dashboard' },
+  '/visits':   { t:'บันทึกการเยี่ยมผู้สูงอายุ', b:'หน้าหลัก / บันทึกการเยี่ยม' },
+  '/staff':    { t:'จัดการ Care Manager และ Caregiver', b:'หน้าหลัก / จัดการ CM และ CG' },
+  '/elderly':  { t:'จัดการข้อมูลผู้สูงอายุ', b:'หน้าหลัก / ข้อมูลผู้สูงอายุ' },
+  '/reports':  { t:'รายงานและสถิติ', b:'หน้าหลัก / รายงาน' },
+  '/equipment':{ t:'จัดการวัสดุอุปกรณ์', b:'หน้าหลัก / วัสดุอุปกรณ์' },
+  '/users':    { t:'จัดการผู้ใช้งานระบบ', b:'หน้าหลัก / ผู้ใช้งาน' },
+  '/settings': { t:'ตั้งค่าระบบ', b:'หน้าหลัก / ตั้งค่า' },
+};
+
+function MainLayout() {
+  const [open, setOpen] = useState(false);
+  const loc = useLocation();
+  const base = '/' + loc.pathname.split('/')[1];
+  const meta = PAGE_META[base] || { t:'', b:'' };
+  useEffect(() => { window.scrollTo(0,0); }, [loc.pathname]);
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar open={open} onClose={()=>setOpen(false)} />
+      <div className="flex-1 flex flex-col min-w-0">
+        <Header onMenuClick={()=>setOpen(true)} breadcrumb={meta.b} pageTitle={meta.t} />
+        <main className="flex-1 p-4 lg:p-6"><Outlet /></main>
+        <footer className="px-6 py-4 text-center text-[11px] text-slate-400 border-t border-slate-100 bg-white">
+          ระบบดูแลผู้สูงอายุที่มีภาวะพึ่งพิงระยะยาว (LTC) · {ORG.name} {ORG.area}
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   pages/Dashboard.jsx
+   ========================================================================= */
+function Dashboard() {
+  const { elderly, stats, pieData, loading, visits } = useData();
+  const navigate = useNavigate();
+
+  const todayList = useMemo(() => elderly.filter(e => e.visitStatus !== 'เยี่ยมแล้ว').slice(0, 10), [elderly]);
+  const urgentList = useMemo(() => elderly.filter(e => e.urgency !== 'ปกติ'), [elderly]);
+
+  const todayCols = [
+    { key:'name', header:'ชื่อ-นามสกุล', render:r => <span className="font-medium text-slate-800">{r.name}</span> },
+    { key:'age', header:'อายุ', render:r => `${r.age} ปี` },
+    { key:'village', header:'หมู่บ้าน' },
+    { key:'adl', header:'ระดับ ADL', render:r => <span className="font-semibold text-primary">{r.adl}</span> },
+    { key:'cg', header:'CG ผู้รับผิดชอบ' },
+    { key:'visitStatus', header:'สถานะ', render:r => <StatusBadge label={r.visitStatus} /> },
+    { key:'act', header:'', render:r => <Button size="sm" icon="ClipboardPlus" onClick={()=>navigate('/visits?id='+r.id)}>บันทึกเยี่ยม</Button> },
+  ];
+  const urgentCols = [
+    { key:'name', header:'ชื่อ-นามสกุล', render:r => <span className="font-medium text-slate-800">{r.name}</span> },
+    { key:'village', header:'หมู่บ้าน' },
+    { key:'group', header:'กลุ่ม', render:r => <StatusBadge label={r.group} /> },
+    { key:'diseases', header:'ปัญหาสุขภาพ' },
+    { key:'nextVisit', header:'นัดเยี่ยมครั้งถัดไป' },
+    { key:'urgency', header:'ความเร่งด่วน', render:r => <StatusBadge label={r.urgency} /> },
+    { key:'act', header:'', render:r => <Link to={`/elderly/${r.id}`}><Button size="sm" variant="outline">ดูรายละเอียด</Button></Link> },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatCard icon="Users" label="ผู้สูงอายุทั้งหมด" value={`${stats.totalElderly} คน`} color="teal" />
+        <StatCard icon="House" label="ผู้สูงอายุติดบ้าน" value={`${stats.homebound} คน`} color="amber" />
+        <StatCard icon="BedDouble" label="ผู้สูงอายุติดเตียง" value={`${stats.bedridden} คน`} color="red" />
+        <StatCard icon="UserCog" label="Care Manager (CM)" value={`${stats.cmCount} คน`} color="blue" />
+        <StatCard icon="HeartHandshake" label="Caregiver (CG)" value={`${stats.cgCount} คน`} color="blue" />
+        <StatCard icon="CalendarCheck" label="เยี่ยมแล้วในเดือนนี้" value={`${stats.visited}/${stats.target}`} subValue={`คิดเป็น ${Math.round(stats.visited/stats.target*100)}% ของเป้าหมาย`} color="green" />
+        <StatCard icon="Clock" label="รอเยี่ยม" value={`${stats.pending} ราย`} color="amber" />
+        <StatCard icon="TriangleAlert" label="เคสเร่งด่วน" value={`${stats.urgent} ราย`} color="red" />
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <Button icon="Plus" onClick={()=>navigate('/visits')}>บันทึกการเยี่ยม</Button>
+        <Button icon="UserPlus" variant="secondary" onClick={()=>navigate('/elderly?action=add')}>เพิ่มผู้สูงอายุ</Button>
+        <Button icon="FileChartColumn" variant="outline" onClick={()=>navigate('/reports')}>ดูรายงานประจำเดือน</Button>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+        <Card title="ผลงานการเยี่ยมย้อนหลัง 6 เดือน" subtitle="เปรียบเทียบเป้าหมายกับผลงานจริง (ครั้ง)" className="xl:col-span-2">
+          <div style={{width:'100%', height:300}}>
+            <ResponsiveContainer>
+              <BarChart data={monthlyVisitChart} margin={{top:10,right:10,left:-20,bottom:0}}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                <XAxis dataKey="month" tick={{fontSize:11, fill:'#64748B'}} axisLine={false} tickLine={false} />
+                <YAxis tick={{fontSize:11, fill:'#64748B'}} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{borderRadius:12, border:'1px solid #E2E8F0', fontSize:12}} />
+                <Legend wrapperStyle={{fontSize:12}} />
+                <Bar dataKey="เป้าหมาย" fill="#2563EB" radius={[6,6,0,0]} maxBarSize={28} />
+                <Bar dataKey="เยี่ยมจริง" fill="#0F766E" radius={[6,6,0,0]} maxBarSize={28} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card title="สัดส่วนตามระดับการพึ่งพิง" subtitle={`ข้อมูลผู้สูงอายุ ${stats.totalElderly} คน`}>
+          <div style={{width:'100%', height:300}}>
+            <ResponsiveContainer>
+              <PieChart>
+                <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={62} outerRadius={95} paddingAngle={3}>
+                  {pieData.map((e,i) => <Cell key={i} fill={e.color} />)}
+                </Pie>
+                <Tooltip contentStyle={{borderRadius:12, border:'1px solid #E2E8F0', fontSize:12}} formatter={(v,n)=>[`${v} คน`, n]} />
+                <Legend wrapperStyle={{fontSize:12}} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+      </div>
+
+      <Card title="กำหนดเยี่ยมวันนี้" subtitle={`ผู้สูงอายุที่ต้องติดตามเยี่ยม ${todayList.length} ราย`}>
+        <DataTable columns={todayCols} data={todayList} loading={loading} pageSize={5} emptyMessage="ไม่มีกำหนดเยี่ยมสำหรับวันนี้" />
+      </Card>
+
+      <Card title="เคสต้องติดตาม" subtitle="ผู้สูงอายุที่มีระดับความเร่งด่วนสูงกว่าปกติ">
+        <DataTable columns={urgentCols} data={urgentList} loading={loading} pageSize={5} emptyMessage="ไม่มีเคสที่ต้องติดตามเป็นพิเศษ" />
+      </Card>
+    </div>
+  );
+}
+
+/* =========================================================================
+   pages/VisitRecord.jsx  —  Stepper 5 ขั้นตอน
+   ========================================================================= */
+const STEPS = ['เลือกผู้สูงอายุ','รายละเอียดการเยี่ยม','ประเมินสุขภาพ','แผนการดูแล','หลักฐานและยืนยัน'];
+
+function VisitRecord() {
+  const { elderly, visits, loading } = useData();
+  const { showToast } = useToast();
+  const loc = useLocation();
+  const [step, setStep] = useState(0);
+  const [search, setSearch] = useState('');
+  const [selected, setSelected] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    date:new Date().toISOString().slice(0,10), time:'', visitType:'เยี่ยมบ้าน', visitor:'', visitorRole:'CG', companion:'', presence:'พบ',
+    adl:'', bp:'', pulse:'', weight:'', sugar:'', wound:'ไม่มี', diet:'รับประทานได้ปกติ', excretion:'ปกติ', medication:'รับประทานยาครบตามแผน', mental:'อารมณ์แจ่มใส', problem:'',
+    activities:'', advice:'', carePlan:'', nextDate:'', urgency:'ปกติ',
+    photoUrl:'', note:'', confirm:false,
   });
-  const body = document.getElementById('summaryBody');
-  const keys = Object.keys(addressMap);
-  if(keys.length===0){
-    body.innerHTML = '<tr><td colspan="5" class="empty-msg">ยังไม่มีข้อมูล</td></tr>';
-    return;
-  }
-  body.innerHTML = keys.map(addr=>{
-    const s = addressMap[addr];
-    const sum = s.social+s.home+s.bed;
-    return `<tr><td>${addr}</td><td>${s.social}</td><td>${s.home}</td><td>${s.bed}</td><td><b>${sum}</b></td></tr>`;
-  }).join('');
+
+  useEffect(() => {
+    const id = new URLSearchParams(loc.search).get('id');
+    if (id && elderly.length) {
+      const found = elderly.find(e => String(e.id) === id);
+      if (found) { setSelected(found); setForm(f => ({...f, adl:found.adl !== '-' ? found.adl : '', visitor:found.cg !== '-' ? found.cg : ''})); }
+    }
+  }, [loc.search, elderly]);
+
+  const up = (k,v) => setForm(f => ({...f,[k]:v}));
+  const filtered = useMemo(() => elderly.filter(e =>
+    !search || e.name.includes(search) || String(e.hn).includes(search) || e.village.includes(search) || String(e.nationalId).includes(search)
+  ), [elderly, search]);
+
+  const next = () => {
+    if (step === 0 && !selected) return showToast('กรุณาเลือกผู้สูงอายุก่อนดำเนินการต่อ', 'error');
+    if (step === 1 && !form.date) return showToast('กรุณาระบุวันที่เยี่ยม', 'error');
+    setStep(s => Math.min(s+1, 4));
+  };
+
+  const save = async (draft) => {
+    if (!draft && !form.confirm) return showToast('กรุณายืนยันความถูกต้องของข้อมูลก่อนส่งให้ CM ตรวจสอบ', 'error');
+    setSaving(true);
+    try {
+      const payload = {
+        patientId: selected.id, patientName: selected.name, village: selected.village,
+        date: form.date, time: form.time, visitType: form.visitType, visitor: form.visitor, visitorRole: form.visitorRole,
+        companion: form.companion, presence: form.presence,
+        adl: form.adl, bp: form.bp, pulse: form.pulse, weight: form.weight, sugar: form.sugar, wound: form.wound,
+        diet: form.diet, excretion: form.excretion, medication: form.medication, mental: form.mental, problem: form.problem,
+        activities: form.activities, advice: form.advice, plan: form.carePlan, nextdate: form.nextDate, urgency: form.urgency,
+        photoUrl: form.photoUrl, note: form.note,
+        status: draft ? 'ร่าง' : 'รอ CM ตรวจสอบ',
+      };
+      if (firebaseReady) await visitService.create(payload);
+      showToast(draft ? 'บันทึกร่างเรียบร้อยแล้ว' : 'บันทึกและส่งให้ CM ตรวจสอบเรียบร้อยแล้ว');
+      if (!draft) { setStep(0); setSelected(null); setForm(f => ({...f, problem:'', activities:'', advice:'', carePlan:'', photoUrl:'', note:'', confirm:false})); }
+    } catch (err) { showToast('บันทึกไม่สำเร็จ: ' + err.message, 'error'); }
+    finally { setSaving(false); }
+  };
+
+  const recentCols = [
+    { key:'dateLabel', header:'วันที่เยี่ยม', render:r => toThaiDate(r.date) },
+    { key:'patientName', header:'ผู้สูงอายุ' },
+    { key:'visitType', header:'รูปแบบ' },
+    { key:'visitor', header:'ผู้เยี่ยม' },
+    { key:'problem', header:'ปัญหาที่พบ', render:r => <span className="max-w-[260px] truncate inline-block">{r.problem || '-'}</span> },
+    { key:'urgency', header:'ความเร่งด่วน', render:r => <StatusBadge label={r.urgency || 'ปกติ'} /> },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <Card bodyClass="pt-5">
+        <div className="flex items-start overflow-x-auto pb-1">
+          {STEPS.map((label,i) => (
+            <div key={label} className="flex items-center flex-1 min-w-[110px]">
+              <div className="flex flex-col items-center flex-1">
+                <button onClick={()=>i<step && setStep(i)} className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${i<step ? 'bg-primary text-white' : i===step ? 'bg-primary text-white ring-4 ring-teal-100' : 'bg-slate-100 text-slate-400'}`}>
+                  {i<step ? <Icon name="Check" className="w-4 h-4" /> : i+1}
+                </button>
+                <p className={`text-[11px] mt-2 text-center px-1 ${i===step ? 'text-primary font-semibold' : 'text-slate-400'}`}>{label}</p>
+              </div>
+              {i < STEPS.length-1 && <div className={`h-0.5 flex-1 mx-1 mt-[-22px] ${i<step ? 'bg-primary' : 'bg-slate-200'}`} />}
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {step === 0 && (
+        <Card title="ขั้นตอนที่ 1: เลือกผู้สูงอายุ" subtitle="ค้นหาด้วยชื่อ, เลขบัตรประชาชน, HN หรือหมู่บ้าน">
+          <div className="relative mb-4">
+            <Icon name="Search" className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="พิมพ์เพื่อค้นหา เช่น บุญมี, HN-00231, หมู่ 1" className="input pl-9" />
+          </div>
+          {loading ? <p className="text-sm text-slate-400 py-6 text-center">กำลังโหลดรายชื่อ...</p> : (
+            <div className="grid sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto mb-4">
+              {filtered.map(e => (
+                <button key={e.id} onClick={()=>{setSelected(e); setForm(f=>({...f, adl:e.adl!=='-'?e.adl:'', visitor:e.cg!=='-'?e.cg:''}));}}
+                  className={`text-left p-3 rounded-xl border transition-all ${selected?.id===e.id ? 'border-primary bg-teal-50 ring-2 ring-primary/20' : 'border-slate-200 hover:border-primary/40 hover:bg-slate-50'}`}>
+                  <div className="flex items-center gap-3">
+                    {e.photoUrl ? <img src={e.photoUrl} className="w-10 h-10 rounded-full object-cover" /> : <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center"><Icon name="User" className="w-5 h-5 text-slate-300" /></div>}
+                    <div className="min-w-0">
+                      <p className="font-medium text-slate-800 truncate">{e.name}</p>
+                      <p className="text-[11px] text-slate-500 truncate">{e.hn} · {e.village} · ADL {e.adl}</p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+              {filtered.length === 0 && <p className="text-sm text-slate-400 col-span-2 text-center py-6">ไม่พบผู้สูงอายุที่ค้นหา</p>}
+            </div>
+          )}
+          {selected && (
+            <div className="bg-teal-50 border border-teal-100 rounded-xl p-4">
+              <p className="text-xs font-semibold text-primary mb-3">ข้อมูลสรุปผู้สูงอายุที่เลือก</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <Info label="ชื่อผู้สูงอายุ" value={selected.name} />
+                <Info label="อายุ" value={`${selected.age} ปี`} />
+                <Info label="หมู่บ้าน" value={selected.village} />
+                <Info label="ระดับ ADL" value={`${selected.adl} (${selected.group})`} />
+                <Info label="โรคประจำตัว" value={selected.diseases} />
+                <Info label="ประวัติแพ้ยา" value={selected.allergies} danger={selected.allergies!=='ไม่มี'} />
+                <Info label="CM ผู้รับผิดชอบ" value={selected.cm} />
+                <Info label="CG ผู้รับผิดชอบ" value={selected.cg} />
+              </div>
+            </div>
+          )}
+        </Card>
+      )}
+
+      {step === 1 && (
+        <Card title="ขั้นตอนที่ 2: รายละเอียดการเยี่ยม">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="วันที่เยี่ยม *"><input type="date" value={form.date} onChange={e=>up('date',e.target.value)} className="input" /></Field>
+            <Field label="เวลาเยี่ยม"><input type="time" value={form.time} onChange={e=>up('time',e.target.value)} className="input" /></Field>
+            <Field label="รูปแบบการเยี่ยม">
+              <select value={form.visitType} onChange={e=>up('visitType',e.target.value)} className="input">
+                <option>เยี่ยมบ้าน</option><option>โทรติดตาม</option><option>Telehealth</option>
+              </select>
+            </Field>
+            <Field label="ประเภทผู้เยี่ยม">
+              <select value={form.visitorRole} onChange={e=>up('visitorRole',e.target.value)} className="input">
+                <option value="CM">Care Manager (CM)</option><option value="CG">Caregiver (CG)</option><option value="STAFF">เจ้าหน้าที่ รพ.สต.</option>
+              </select>
+            </Field>
+            <Field label="ชื่อผู้เยี่ยม"><input value={form.visitor} onChange={e=>up('visitor',e.target.value)} placeholder="เช่น นางสมหญิง ทองดี" className="input" /></Field>
+            <Field label="ผู้ร่วมเยี่ยม"><input value={form.companion} onChange={e=>up('companion',e.target.value)} placeholder="เช่น อสม.ประจำหมู่บ้าน" className="input" /></Field>
+            <Field label="สถานะการพบผู้รับบริการ" className="md:col-span-2">
+              <div className="flex flex-wrap gap-2">
+                {['พบ','ไม่พบ','ย้ายที่อยู่','เสียชีวิต'].map(s => (
+                  <button key={s} type="button" onClick={()=>up('presence',s)}
+                    className={`px-4 py-2.5 rounded-lg text-sm border transition-colors ${form.presence===s ? 'bg-primary text-white border-primary' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}>{s}</button>
+                ))}
+              </div>
+            </Field>
+          </div>
+        </Card>
+      )}
+
+      {step === 2 && (
+        <Card title="ขั้นตอนที่ 3: การประเมินสุขภาพ">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <Field label="คะแนน ADL (0-20)"><input type="number" min="0" max="20" value={form.adl} onChange={e=>up('adl',e.target.value)} className="input" /></Field>
+            <Field label="ความดันโลหิต (mmHg)"><input value={form.bp} onChange={e=>up('bp',e.target.value)} placeholder="120/80" className="input" /></Field>
+            <Field label="ชีพจร (ครั้ง/นาที)"><input type="number" value={form.pulse} onChange={e=>up('pulse',e.target.value)} className="input" /></Field>
+            <Field label="น้ำหนัก (กก.)"><input type="number" step="0.1" value={form.weight} onChange={e=>up('weight',e.target.value)} className="input" /></Field>
+            <Field label="น้ำตาลในเลือด (mg/dL)"><input type="number" value={form.sugar} onChange={e=>up('sugar',e.target.value)} className="input" /></Field>
+            <Field label="สภาพแผลกดทับ">
+              <select value={form.wound} onChange={e=>up('wound',e.target.value)} className="input">
+                <option>ไม่มี</option><option>ระดับ 1</option><option>ระดับ 2</option><option>ระดับ 3</option><option>ระดับ 4</option>
+              </select>
+            </Field>
+            <Field label="การรับประทานอาหาร"><input value={form.diet} onChange={e=>up('diet',e.target.value)} className="input" /></Field>
+            <Field label="การขับถ่าย"><input value={form.excretion} onChange={e=>up('excretion',e.target.value)} className="input" /></Field>
+            <Field label="การใช้ยา"><input value={form.medication} onChange={e=>up('medication',e.target.value)} className="input" /></Field>
+            <Field label="อารมณ์และสุขภาพจิต" className="col-span-2 md:col-span-3"><input value={form.mental} onChange={e=>up('mental',e.target.value)} className="input" /></Field>
+          </div>
+          {form.adl !== '' && <p className="text-xs text-slate-500 mt-3">ระบบประเมินเบื้องต้น: คะแนน ADL {form.adl} จัดอยู่ในกลุ่ม <b className="text-primary">{adlGroup(form.adl)}</b></p>}
+          <Field label="ปัญหา/อาการที่พบ" className="mt-4"><textarea rows={3} value={form.problem} onChange={e=>up('problem',e.target.value)} className="input" placeholder="เช่น พบแผลกดทับระดับ 2 บริเวณสะโพกด้านขวา" /></Field>
+        </Card>
+      )}
+
+      {step === 3 && (
+        <Card title="ขั้นตอนที่ 4: การดูแลและแผนติดตาม">
+          <div className="space-y-4">
+            <Field label="กิจกรรม/หัตถการที่ให้บริการ"><textarea rows={2} value={form.activities} onChange={e=>up('activities',e.target.value)} className="input" placeholder="เช่น ทำแผลกดทับ, วัดสัญญาณชีพ, ฟื้นฟูสมรรถภาพ" /></Field>
+            <Field label="คำแนะนำแก่ผู้สูงอายุ/ญาติ"><textarea rows={2} value={form.advice} onChange={e=>up('advice',e.target.value)} className="input" placeholder="เช่น แนะนำพลิกตะแคงตัวทุก 2 ชั่วโมง" /></Field>
+            <Field label="แผนดูแลต่อเนื่อง (Care Plan)"><textarea rows={2} value={form.carePlan} onChange={e=>up('carePlan',e.target.value)} className="input" /></Field>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Field label="วันที่นัดเยี่ยมครั้งถัดไป"><input type="date" value={form.nextDate} onChange={e=>up('nextDate',e.target.value)} className="input" /></Field>
+              <Field label="ระดับความเร่งด่วน">
+                <div className="flex gap-2">
+                  {[{v:'ปกติ',c:'emerald'},{v:'ติดตาม',c:'amber'},{v:'เร่งด่วน',c:'red'}].map(o => (
+                    <button key={o.v} type="button" onClick={()=>up('urgency',o.v)}
+                      className={`flex-1 px-3 py-2.5 rounded-lg text-sm border transition-colors ${form.urgency===o.v ? `bg-${o.c}-600 text-white border-${o.c}-600` : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                      style={form.urgency===o.v ? {backgroundColor: o.c==='emerald'?'#059669':o.c==='amber'?'#D97706':'#DC2626', borderColor:'transparent', color:'#fff'} : {}}>
+                      {o.v}
+                    </button>
+                  ))}
+                </div>
+              </Field>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {step === 4 && (
+        <Card title="ขั้นตอนที่ 5: หลักฐานและยืนยัน">
+          <div className="space-y-4">
+            <PhotoUploader value={form.photoUrl} onChange={v=>up('photoUrl',v)} label="รูปถ่ายระหว่างเยี่ยม (สภาพแผล / สภาพบ้าน)" />
+            <Field label="แนบเอกสารเพิ่มเติม"><input type="file" multiple className="input py-2" /></Field>
+            <Field label="หมายเหตุเพิ่มเติม"><textarea rows={2} value={form.note} onChange={e=>up('note',e.target.value)} className="input" /></Field>
+            <label className="flex items-start gap-2.5 p-3 rounded-lg bg-slate-50 border border-slate-100 cursor-pointer">
+              <input type="checkbox" checked={form.confirm} onChange={e=>up('confirm',e.target.checked)} className="w-4 h-4 mt-0.5 accent-teal-700" />
+              <span className="text-sm text-slate-600">ข้าพเจ้าขอยืนยันว่าข้อมูลการเยี่ยมที่บันทึกข้างต้นถูกต้องตรงตามความเป็นจริงทุกประการ</span>
+            </label>
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Button variant="outline" icon="Save" onClick={()=>save(true)} disabled={saving}>บันทึกร่าง</Button>
+              <Button icon="Send" onClick={()=>save(false)} disabled={saving}>{saving ? 'กำลังบันทึก...' : 'บันทึกและส่งให้ CM ตรวจสอบ'}</Button>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {step < 4 && (
+        <div className="flex justify-between gap-2">
+          <Button variant="outline" icon="ChevronLeft" onClick={()=>setStep(s=>Math.max(s-1,0))} disabled={step===0}>ย้อนกลับ</Button>
+          <Button onClick={next}>ถัดไป <Icon name="ChevronRight" className="w-4 h-4" /></Button>
+        </div>
+      )}
+
+      <Card title="บันทึกการเยี่ยมล่าสุด" subtitle="ประวัติการเยี่ยมที่บันทึกเข้าระบบ">
+        <DataTable columns={recentCols} data={[...visits].sort((a,b)=>String(b.date).localeCompare(String(a.date)))} pageSize={5} emptyMessage="ยังไม่มีบันทึกการเยี่ยมในระบบ" />
+      </Card>
+    </div>
+  );
 }
 
-function downloadCSV(filename, rows){
-  const csvContent = rows.map(r=>r.map(cell=>{
-    const val = (cell===undefined||cell===null) ? '' : String(cell);
-    return '"' + val.replace(/"/g,'""') + '"';
-  }).join(',')).join('\r\n');
-  const blob = new Blob(['\uFEFF'+csvContent], {type:'text/csv;charset=utf-8;'});
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = filename;
-  link.click();
+function Info({ label, value, danger }) {
+  return <div><p className="text-[11px] text-slate-400">{label}</p><p className={`font-medium ${danger ? 'text-red-600' : 'text-slate-700'}`}>{value}</p></div>;
 }
 
-function exportPatientsCSV(){
-  const rows = [['เลขบัตรประชาชน','ชื่อ-สกุล','อายุ','เพศ','ที่อยู่','ประเภท','โรคประจำตัว','ผู้ดูแล','เบอร์โทร','หมายเหตุ','ลิงก์รูปภาพ']];
-  patients.forEach(p=>rows.push([p.nid,p.name,p.age,p.gender,p.address,p.type,p.disease,p.caregiver,p.phone,p.note,p.photoUrl]));
-  downloadCSV('ทะเบียนผู้สูงอายุ_บ้านทับสอ.csv', rows);
+/* =========================================================================
+   pages/StaffManagement.jsx & StaffDetail.jsx
+   ========================================================================= */
+function StaffManagement() {
+  const [tab, setTab] = useState('cm');
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    setLoading(true);
+    const fn = tab === 'cm' ? staffService.getCM : staffService.getCG;
+    fn().then(d => { setData(d); setLoading(false); });
+  }, [tab]);
+
+  const filtered = data.filter(s => !search || s.name.includes(search) || s.code.includes(search) || s.area.includes(search));
+
+  const cols = [
+    { key:'avatar', header:'', render:r => <div className="w-9 h-9 rounded-full bg-teal-100 text-primary flex items-center justify-center font-semibold text-sm">{r.name.replace(/^(นาย|นาง|นางสาว)/,'')[0]}</div> },
+    { key:'name', header:'ชื่อ-นามสกุล', render:r => <Link to={`/staff/${r.id}`} className="font-medium text-slate-800 hover:text-primary">{r.name}</Link> },
+    { key:'code', header:'รหัสบุคลากร' },
+    { key:'position', header:'ตำแหน่ง' },
+    { key:'phone', header:'เบอร์โทรศัพท์' },
+    { key:'area', header:'พื้นที่รับผิดชอบ' },
+    { key:'elderlyCount', header:'ผู้สูงอายุที่ดูแล', render:r => `${r.elderlyCount} คน` },
+    { key:'visitsThisMonth', header:'งานเยี่ยมเดือนนี้', render:r => `${r.visitsThisMonth} ครั้ง` },
+    { key:'status', header:'สถานะ', render:r => <StatusBadge label={r.status} /> },
+    { key:'act', header:'จัดการ', render:r => (
+      <div className="flex gap-1">
+        <Link to={`/staff/${r.id}`}><Button size="sm" variant="ghost" icon="Eye" /></Link>
+        <Button size="sm" variant="ghost" icon="Pencil" onClick={()=>showToast('ฟังก์ชันแก้ไขข้อมูลบุคลากรอยู่ระหว่างพัฒนา','info')} />
+        <Button size="sm" variant="ghost" icon="Trash2" className="text-red-500" onClick={()=>showToast('ไม่สามารถลบข้อมูลในโหมดตัวอย่างได้','warning')} />
+      </div>
+    )},
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex gap-1 bg-white p-1 rounded-xl border border-slate-100 shadow-sm">
+          {[{k:'cm',l:'Care Manager (CM)',n:mockCM.length},{k:'cg',l:'Caregiver (CG)',n:mockCG.length}].map(t => (
+            <button key={t.k} onClick={()=>setTab(t.k)} className={`px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${tab===t.k ? 'bg-primary text-white' : 'text-slate-600 hover:bg-slate-50'}`}>
+              {t.l} <span className="opacity-70">({t.n})</span>
+            </button>
+          ))}
+        </div>
+        <Button icon="UserPlus" onClick={()=>showToast('ฟังก์ชันเพิ่มบุคลากรอยู่ระหว่างพัฒนา','info')}>เพิ่มบุคลากร</Button>
+      </div>
+      <FilterBar searchValue={search} onSearchChange={setSearch} placeholder="ค้นหาชื่อ, รหัสบุคลากร หรือพื้นที่รับผิดชอบ" />
+      <DataTable columns={cols} data={filtered} loading={loading} />
+    </div>
+  );
 }
 
-function exportVisitsCSV(){
-  const rows = [['วันที่เยี่ยม','ชื่อผู้สูงอายุ','ประเภท','ผู้เยี่ยม','BP','PR','Temp','DTX','ADL','ปัญหาที่พบ','การช่วยเหลือ','แผนครั้งถัดไป','นัดครั้งถัดไป','ลิงก์รูปภาพ']];
-  visits.forEach(v=>{
-    const p = patients.find(x=>x.id===v.patientId);
-    rows.push([v.date, p?p.name:'', p?p.type:'', v.visitor, v.bp, v.pr, v.temp, v.dtx, v.adl, v.problem, v.help, v.plan, v.nextdate, v.photoUrl]);
-  });
-  downloadCSV('บันทึกการเยี่ยมบ้าน_บ้านทับสอ.csv', rows);
+function StaffDetail() {
+  const { id } = useParams();
+  const { elderly, visits } = useData();
+  const [staff, setStaff] = useState(null);
+  const [tab, setTab] = useState(0);
+  const TABS = ['ข้อมูลทั่วไป','ผู้สูงอายุในความดูแล','ผลงานการเยี่ยม','ปฏิทินภารกิจ'];
+
+  useEffect(() => { staffService.getById(id).then(setStaff); }, [id]);
+  if (!staff) return <Card><p className="text-slate-400 text-sm text-center py-8">ไม่พบข้อมูลบุคลากร</p></Card>;
+
+  const mine = elderly.filter(e => e.cm === staff.name || e.cg === staff.name);
+  const myVisits = visits.filter(v => v.visitor === staff.name);
+
+  const today = new Date();
+  const daysInMonth = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
+  const taskDays = [3,7,12,14,17,20,25];
+
+  return (
+    <div className="space-y-5">
+      <Link to="/staff" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-primary"><Icon name="ArrowLeft" className="w-4 h-4" />กลับไปหน้ารายชื่อบุคลากร</Link>
+
+      <Card>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-teal-100 text-primary flex items-center justify-center font-bold text-2xl shrink-0">{staff.name.replace(/^(นาย|นาง|นางสาว)/,'')[0]}</div>
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800">{staff.name}</h2>
+              <StatusBadge label={staff.status} />
+              <StatusBadge label={staff.role === 'CM' ? 'Care Manager' : 'Caregiver'} type="info" />
+            </div>
+            <p className="text-sm text-slate-500 mt-0.5">{staff.code} · {staff.position}</p>
+            <div className="flex flex-wrap gap-4 mt-2 text-sm text-slate-500">
+              <span className="flex items-center gap-1.5"><Icon name="Phone" className="w-4 h-4" />{staff.phone}</span>
+              <span className="flex items-center gap-1.5"><Icon name="MapPin" className="w-4 h-4" />{staff.area}</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatCard icon="Users" label="ผู้สูงอายุในความดูแล" value={`${staff.elderlyCount} คน`} color="teal" />
+        <StatCard icon="CalendarCheck" label="งานเยี่ยมเดือนนี้" value={`${staff.visitsThisMonth} ครั้ง`} color="green" />
+        <StatCard icon="MapPin" label="พื้นที่รับผิดชอบ" value={staff.area} color="blue" />
+        <StatCard icon="TrendingUp" label="อัตราความสำเร็จ" value={`${Math.round(staff.visitsThisMonth/staff.elderlyCount*100)}%`} color="amber" />
+      </div>
+
+      <div className="flex gap-1 border-b border-slate-200 overflow-x-auto">
+        {TABS.map((t,i) => (
+          <button key={t} onClick={()=>setTab(i)} className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap ${tab===i ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>{t}</button>
+        ))}
+      </div>
+
+      {tab === 0 && (
+        <Card title="ข้อมูลทั่วไปและพื้นที่รับผิดชอบ">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+            <Info label="รหัสบุคลากร" value={staff.code} />
+            <Info label="ตำแหน่ง" value={staff.position} />
+            <Info label="เบอร์โทรศัพท์" value={staff.phone} />
+            <Info label="พื้นที่รับผิดชอบ" value={staff.area} />
+            <Info label="หน่วยบริการ" value={ORG.name} />
+            <Info label="สถานะการปฏิบัติงาน" value={staff.status} />
+          </div>
+        </Card>
+      )}
+      {tab === 1 && (
+        <Card title={`รายชื่อผู้สูงอายุในความดูแล (${mine.length} ราย)`}>
+          <DataTable pageSize={6} data={mine} columns={[
+            { key:'hn', header:'HN' },
+            { key:'name', header:'ชื่อ-นามสกุล', render:r => <Link to={`/elderly/${r.id}`} className="font-medium hover:text-primary">{r.name}</Link> },
+            { key:'age', header:'อายุ', render:r=>`${r.age} ปี` },
+            { key:'village', header:'หมู่บ้าน' },
+            { key:'group', header:'กลุ่ม', render:r => <StatusBadge label={r.group} /> },
+            { key:'lastVisit', header:'เยี่ยมล่าสุด' },
+            { key:'visitStatus', header:'สถานะ', render:r => <StatusBadge label={r.visitStatus} /> },
+          ]} emptyMessage="ยังไม่มีผู้สูงอายุในความดูแล" />
+        </Card>
+      )}
+      {tab === 2 && (
+        <Card title="ตารางผลงานการเยี่ยม">
+          <DataTable pageSize={6} data={myVisits} columns={[
+            { key:'date', header:'วันที่', render:r => toThaiDate(r.date) },
+            { key:'patientName', header:'ผู้สูงอายุ' },
+            { key:'visitType', header:'รูปแบบ' },
+            { key:'problem', header:'ปัญหาที่พบ' },
+            { key:'urgency', header:'ความเร่งด่วน', render:r => <StatusBadge label={r.urgency||'ปกติ'} /> },
+          ]} emptyMessage="ยังไม่มีผลงานการเยี่ยมที่บันทึกไว้" />
+        </Card>
+      )}
+      {tab === 3 && (
+        <Card title={`ปฏิทินภารกิจเยี่ยม เดือน${THAI_MONTHS[today.getMonth()]} ${today.getFullYear()+543}`} subtitle="วันที่ไฮไลต์คือวันที่มีกำหนดออกเยี่ยม">
+          <div className="grid grid-cols-7 gap-1.5 text-center">
+            {['อา','จ','อ','พ','พฤ','ศ','ส'].map(d => <div key={d} className="text-xs font-semibold text-slate-400 py-2">{d}</div>)}
+            {Array.from({length:firstDay}).map((_,i) => <div key={'e'+i} />)}
+            {Array.from({length:daysInMonth}).map((_,i) => {
+              const day = i+1, has = taskDays.includes(day), isToday = day === today.getDate();
+              return (
+                <div key={day} className={`aspect-square flex flex-col items-center justify-center rounded-lg text-sm border ${isToday ? 'border-primary bg-teal-50 font-bold text-primary' : has ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-slate-100 text-slate-500'}`}>
+                  {day}
+                  {has && <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-0.5" />}
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+    </div>
+  );
 }
 
-async function clearAllData(){
-  if(!confirm('⚠️ ยืนยันการล้างข้อมูลทั้งหมดในระบบ? การกระทำนี้ไม่สามารถย้อนกลับได้')) return;
-  if(!confirm('ยืนยันอีกครั้ง: ข้อมูลทะเบียนผู้สูงอายุและประวัติการเยี่ยมทั้งหมดจะถูกลบถาวร')) return;
-  try{
-    const pSnap = await patientsCol.get();
-    const vSnap = await visitsCol.get();
-    const batch = db.batch();
-    pSnap.forEach(d=>batch.delete(d.ref));
-    vSnap.forEach(d=>batch.delete(d.ref));
-    await batch.commit();
-    alert('ล้างข้อมูลเรียบร้อยแล้ว');
-  }catch(err){ alert('ล้างข้อมูลไม่สำเร็จ: '+err.message); }
+/* =========================================================================
+   pages/ElderlyManagement.jsx & ElderlyDetail.jsx
+   ========================================================================= */
+const emptyElderlyForm = { nid:'', name:'', age:'', gender:'ชาย', village:villages[0], adl:'', diseases:'', allergies:'ไม่มี', cm:'', cg:'', phone:'', caregiverName:'', note:'', photoUrl:'' };
+
+function ElderlyManagement() {
+  const { elderly, loading } = useData();
+  const { showToast } = useToast();
+  const loc = useLocation();
+  const [search, setSearch] = useState('');
+  const [fVillage, setFVillage] = useState('');
+  const [fGroup, setFGroup] = useState('');
+  const [fAdl, setFAdl] = useState('');
+  const [fCM, setFCM] = useState('');
+  const [fCG, setFCG] = useState('');
+  const [fStatus, setFStatus] = useState('');
+  const [urgentOnly, setUrgentOnly] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [form, setForm] = useState(emptyElderlyForm);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { if (new URLSearchParams(loc.search).get('action') === 'add') setModal(true); }, [loc.search]);
+
+  const filtered = useMemo(() => elderly.filter(e => {
+    if (search && !(e.name.includes(search) || String(e.hn).includes(search) || String(e.nationalId).includes(search))) return false;
+    if (fVillage && e.village !== fVillage) return false;
+    if (fGroup && e.group !== fGroup) return false;
+    if (fAdl) { const n = Number(e.adl); if (fAdl==='0-4' && !(n<=4)) return false; if (fAdl==='5-11' && !(n>=5&&n<=11)) return false; if (fAdl==='12-20' && !(n>=12)) return false; }
+    if (fCM && e.cm !== fCM) return false;
+    if (fCG && e.cg !== fCG) return false;
+    if (fStatus && e.visitStatus !== fStatus) return false;
+    if (urgentOnly && e.urgency !== 'เร่งด่วน') return false;
+    return true;
+  }), [elderly, search, fVillage, fGroup, fAdl, fCM, fCG, fStatus, urgentOnly]);
+
+  const up = (k,v) => setForm(f => ({...f,[k]:v}));
+
+  const save = async () => {
+    if (!form.name.trim()) return showToast('กรุณากรอกชื่อ-นามสกุลผู้สูงอายุ','error');
+    if (!firebaseReady) return showToast('ยังไม่ได้เชื่อมต่อ Firebase — ไม่สามารถบันทึกได้','error');
+    setSaving(true);
+    try {
+      await elderlyService.create({
+        ...form, adl: form.adl, group: adlGroup(form.adl), type: adlGroup(form.adl),
+        nationalId: maskNid(form.nid), visitStatus:'รอเยี่ยม', urgency:'ปกติ',
+      });
+      showToast('เพิ่มข้อมูลผู้สูงอายุเรียบร้อยแล้ว');
+      setModal(false); setForm(emptyElderlyForm);
+    } catch (err) { showToast('บันทึกไม่สำเร็จ: ' + err.message, 'error'); }
+    finally { setSaving(false); }
+  };
+
+  const exportCSV = () => {
+    const rows = [['HN','ชื่อ-นามสกุล','อายุ','เพศ','หมู่บ้าน','ADL','กลุ่ม','โรคประจำตัว','แพ้ยา','CM','CG','เยี่ยมล่าสุด','สถานะ']];
+    filtered.forEach(e => rows.push([e.hn,e.name,e.age,e.gender,e.village,e.adl,e.group,e.diseases,e.allergies,e.cm,e.cg,e.lastVisit,e.visitStatus]));
+    downloadCSV('ทะเบียนผู้สูงอายุ_บ้านทับสอ.csv', rows);
+    showToast('ส่งออกไฟล์ CSV เรียบร้อยแล้ว');
+  };
+
+  const cols = [
+    { key:'hn', header:'HN' },
+    { key:'name', header:'ชื่อ-นามสกุล', render:r => (
+      <div className="flex items-center gap-2.5">
+        {r.photoUrl ? <img src={r.photoUrl} className="w-8 h-8 rounded-full object-cover" /> : <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center"><Icon name="User" className="w-4 h-4 text-slate-300" /></div>}
+        <Link to={`/elderly/${r.id}`} className="font-medium text-slate-800 hover:text-primary">{r.name}</Link>
+      </div>
+    )},
+    { key:'age', header:'อายุ', render:r=>`${r.age} ปี` },
+    { key:'village', header:'หมู่บ้าน' },
+    { key:'adl', header:'ADL', render:r => <span className="font-semibold text-primary">{r.adl}</span> },
+    { key:'group', header:'กลุ่มผู้สูงอายุ', render:r => <StatusBadge label={r.group} /> },
+    { key:'cg', header:'CG ผู้รับผิดชอบ' },
+    { key:'lastVisit', header:'เยี่ยมล่าสุด' },
+    { key:'visitStatus', header:'สถานะการนัดเยี่ยม', render:r => <StatusBadge label={r.visitStatus} /> },
+    { key:'act', header:'', render:r => <Link to={`/elderly/${r.id}`}><Button size="sm" variant="outline" icon="Eye">รายละเอียด</Button></Link> },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap justify-end gap-2">
+        <Button variant="outline" icon="Download" onClick={exportCSV}>ส่งออก CSV</Button>
+        <Button icon="UserPlus" onClick={()=>setModal(true)}>เพิ่มผู้สูงอายุ</Button>
+      </div>
+
+      <FilterBar searchValue={search} onSearchChange={setSearch} placeholder="ค้นหาชื่อ / HN / เลขบัตรประชาชน">
+        <select value={fVillage} onChange={e=>setFVillage(e.target.value)} className="input w-auto min-w-[150px]"><option value="">ทุกหมู่บ้าน</option>{villages.map(v=><option key={v}>{v}</option>)}</select>
+        <select value={fGroup} onChange={e=>setFGroup(e.target.value)} className="input w-auto min-w-[130px]"><option value="">ทุกกลุ่ม</option><option>ติดสังคม</option><option>ติดบ้าน</option><option>ติดเตียง</option></select>
+        <select value={fAdl} onChange={e=>setFAdl(e.target.value)} className="input w-auto min-w-[140px]"><option value="">ทุกระดับ ADL</option><option value="0-4">ADL 0-4</option><option value="5-11">ADL 5-11</option><option value="12-20">ADL 12-20</option></select>
+        <select value={fCM} onChange={e=>setFCM(e.target.value)} className="input w-auto min-w-[150px]"><option value="">ทุก CM</option>{mockCM.map(c=><option key={c.id}>{c.name}</option>)}</select>
+        <select value={fCG} onChange={e=>setFCG(e.target.value)} className="input w-auto min-w-[150px]"><option value="">ทุก CG</option>{mockCG.map(c=><option key={c.id}>{c.name}</option>)}</select>
+        <select value={fStatus} onChange={e=>setFStatus(e.target.value)} className="input w-auto min-w-[140px]"><option value="">ทุกสถานะ</option><option>เยี่ยมแล้ว</option><option>รอเยี่ยม</option><option>เกินกำหนด</option></select>
+        <label className="flex items-center gap-2 text-sm text-slate-600 px-2 cursor-pointer">
+          <input type="checkbox" checked={urgentOnly} onChange={e=>setUrgentOnly(e.target.checked)} className="w-4 h-4 accent-red-600" />
+          <Icon name="TriangleAlert" className="w-4 h-4 text-red-500" /> เฉพาะเคสเร่งด่วน
+        </label>
+      </FilterBar>
+
+      <DataTable columns={cols} data={filtered} loading={loading} pageSize={10} />
+
+      <Modal open={modal} onClose={()=>setModal(false)} title="เพิ่มข้อมูลผู้สูงอายุ" size="lg"
+        footer={<>
+          <Button variant="outline" onClick={()=>setModal(false)}>ยกเลิก</Button>
+          <Button icon="Save" onClick={save} disabled={saving}>{saving ? 'กำลังบันทึก...' : 'บันทึกข้อมูล'}</Button>
+        </>}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="เลขประจำตัวประชาชน"><input maxLength="13" value={form.nid} onChange={e=>up('nid',e.target.value)} placeholder="เลข 13 หลัก (ระบบจะปกปิดบางส่วน)" className="input" /></Field>
+          <Field label="คำนำหน้า-ชื่อ-นามสกุล *"><input value={form.name} onChange={e=>up('name',e.target.value)} placeholder="เช่น นายบุญมี แสนสุข" className="input" /></Field>
+          <Field label="อายุ (ปี)"><input type="number" value={form.age} onChange={e=>up('age',e.target.value)} className="input" /></Field>
+          <Field label="เพศ"><select value={form.gender} onChange={e=>up('gender',e.target.value)} className="input"><option>ชาย</option><option>หญิง</option></select></Field>
+          <Field label="หมู่บ้าน"><select value={form.village} onChange={e=>up('village',e.target.value)} className="input">{villages.map(v=><option key={v}>{v}</option>)}</select></Field>
+          <Field label="คะแนน ADL (0-20)"><input type="number" min="0" max="20" value={form.adl} onChange={e=>up('adl',e.target.value)} className="input" />{form.adl!=='' && <p className="text-[11px] text-primary mt-1">จัดอยู่ในกลุ่ม: {adlGroup(form.adl)}</p>}</Field>
+          <Field label="โรคประจำตัว"><input value={form.diseases} onChange={e=>up('diseases',e.target.value)} placeholder="เช่น เบาหวาน, ความดันโลหิตสูง" className="input" /></Field>
+          <Field label="ประวัติแพ้ยา"><input value={form.allergies} onChange={e=>up('allergies',e.target.value)} className="input" /></Field>
+          <Field label="CM ผู้รับผิดชอบ"><select value={form.cm} onChange={e=>up('cm',e.target.value)} className="input"><option value="">-- เลือก CM --</option>{mockCM.map(c=><option key={c.id}>{c.name}</option>)}</select></Field>
+          <Field label="CG ผู้รับผิดชอบ"><select value={form.cg} onChange={e=>up('cg',e.target.value)} className="input"><option value="">-- เลือก CG --</option>{mockCG.map(c=><option key={c.id}>{c.name}</option>)}</select></Field>
+          <Field label="ผู้ดูแลหลักในครอบครัว"><input value={form.caregiverName} onChange={e=>up('caregiverName',e.target.value)} className="input" /></Field>
+          <Field label="เบอร์โทรติดต่อ"><input value={form.phone} onChange={e=>up('phone',e.target.value)} className="input" /></Field>
+          <Field label="หมายเหตุ" className="sm:col-span-2"><textarea rows={2} value={form.note} onChange={e=>up('note',e.target.value)} className="input" /></Field>
+          <div className="sm:col-span-2"><PhotoUploader value={form.photoUrl} onChange={v=>up('photoUrl',v)} label="รูปถ่ายผู้สูงอายุ / สภาพบ้าน" /></div>
+        </div>
+      </Modal>
+    </div>
+  );
 }
 
-// ---------- INIT ----------
-document.getElementById('v_date').value = new Date().toISOString().split('T')[0];
+function ElderlyDetail() {
+  const { id } = useParams();
+  const { elderly, visits } = useData();
+  const { showToast } = useToast();
+  const navigate = useNavigate();
+  const [tab, setTab] = useState(0);
+  const TABS = ['ข้อมูลทั่วไป','ข้อมูลสุขภาพ','ผลการประเมิน ADL','แผนการดูแล (Care Plan)','ประวัติการเยี่ยม','วัสดุและอุปกรณ์'];
+
+  const e = elderly.find(x => String(x.id) === id);
+  if (!e) return <Card><p className="text-slate-400 text-sm text-center py-8">ไม่พบข้อมูลผู้สูงอายุรายนี้</p></Card>;
+  const history = visits.filter(v => String(v.patientId) === id).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  const adlTrend = history.slice(0,6).reverse().map(h => ({ date: toThaiDate(h.date).split(' ').slice(0,2).join(' '), ADL: Number(h.adl)||0 }));
+
+  return (
+    <div className="space-y-5">
+      <Link to="/elderly" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-primary"><Icon name="ArrowLeft" className="w-4 h-4" />กลับไปหน้าทะเบียนผู้สูงอายุ</Link>
+
+      <Card>
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
+          {e.photoUrl
+            ? <img src={e.photoUrl} className="w-24 h-24 rounded-2xl object-cover border border-slate-200 shrink-0" />
+            : <div className="w-24 h-24 rounded-2xl bg-slate-100 flex items-center justify-center shrink-0"><Icon name="User" className="w-12 h-12 text-slate-300" /></div>}
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl font-bold text-slate-800">{e.name}</h2>
+            <p className="text-sm text-slate-500 mt-0.5">{e.hn} · อายุ {e.age} ปี · เพศ{e.gender} · {e.village}</p>
+            <p className="text-sm text-slate-500">ระดับ ADL: <span className="font-semibold text-primary">{e.adl}/20</span></p>
+            <div className="flex flex-wrap gap-2 mt-2.5">
+              <StatusBadge label={e.group} />
+              {e.urgency !== 'ปกติ' && <StatusBadge label={e.urgency === 'เร่งด่วน' ? 'เคสเร่งด่วน' : 'ต้องติดตาม'} type={e.urgency==='เร่งด่วน'?'danger':'warning'} />}
+              {e.allergies !== 'ไม่มี' && <StatusBadge label={`แพ้ยา: ${e.allergies}`} type="danger" />}
+              <StatusBadge label={e.visitStatus} />
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button icon="ClipboardPlus" onClick={()=>navigate('/visits?id='+e.id)}>บันทึกการเยี่ยม</Button>
+            <Button variant="outline" icon="Pencil" onClick={()=>showToast('ฟังก์ชันแก้ไขข้อมูลอยู่ระหว่างพัฒนา','info')}>แก้ไขข้อมูล</Button>
+          </div>
+        </div>
+      </Card>
+
+      <div className="flex gap-1 border-b border-slate-200 overflow-x-auto">
+        {TABS.map((t,i) => (
+          <button key={t} onClick={()=>setTab(i)} className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px whitespace-nowrap ${tab===i ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>{t}</button>
+        ))}
+      </div>
+
+      {tab === 0 && (
+        <Card title="ข้อมูลทั่วไป">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+            <Info label="เลขประจำตัวประชาชน" value={e.nationalId} />
+            <Info label="HN" value={e.hn} />
+            <Info label="เพศ / อายุ" value={`${e.gender} / ${e.age} ปี`} />
+            <Info label="หมู่บ้าน" value={e.village} />
+            <Info label="เบอร์โทรติดต่อ" value={e.phone} />
+            <Info label="ผู้ดูแลหลักในครอบครัว" value={e.caregiverName} />
+            <Info label="Care Manager (CM)" value={e.cm} />
+            <Info label="Caregiver (CG)" value={e.cg} />
+            <Info label="สถานะการนัดเยี่ยม" value={e.visitStatus} />
+          </div>
+          {e.note && <div className="mt-4 p-3 bg-slate-50 rounded-lg text-sm text-slate-600"><b>หมายเหตุ:</b> {e.note}</div>}
+        </Card>
+      )}
+      {tab === 1 && (
+        <Card title="ข้อมูลสุขภาพ">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <Info label="โรคประจำตัว" value={e.diseases} />
+            <Info label="ประวัติแพ้ยา" value={e.allergies} danger={e.allergies!=='ไม่มี'} />
+            <Info label="กลุ่มภาวะพึ่งพิง" value={e.group} />
+            <Info label="ระดับความเร่งด่วน" value={e.urgency} danger={e.urgency==='เร่งด่วน'} />
+          </div>
+          {history[0] && (
+            <div className="mt-5 p-4 bg-teal-50 rounded-xl">
+              <p className="text-xs font-semibold text-primary mb-3">สัญญาณชีพจากการเยี่ยมล่าสุด ({toThaiDate(history[0].date)})</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                <Info label="ความดันโลหิต" value={history[0].bp || '-'} />
+                <Info label="ชีพจร" value={history[0].pulse || '-'} />
+                <Info label="น้ำตาลในเลือด" value={history[0].sugar || '-'} />
+                <Info label="แผลกดทับ" value={history[0].wound || 'ไม่มี'} />
+              </div>
+            </div>
+          )}
+        </Card>
+      )}
+      {tab === 2 && (
+        <Card title="ผลการประเมิน ADL (Barthel Index)">
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            <div className="text-center">
+              <p className="text-5xl font-bold text-primary">{e.adl}</p>
+              <p className="text-sm text-slate-400">จาก 20 คะแนน</p>
+              <div className="mt-2"><StatusBadge label={e.group} /></div>
+            </div>
+            <div className="flex-1 w-full">
+              <div className="space-y-2 text-xs">
+                {[{l:'ADL 12-20 คะแนน = กลุ่มติดสังคม',c:'bg-emerald-500'},{l:'ADL 5-11 คะแนน = กลุ่มติดบ้าน',c:'bg-amber-500'},{l:'ADL 0-4 คะแนน = กลุ่มติดเตียง',c:'bg-red-500'}].map(x => (
+                  <div key={x.l} className="flex items-center gap-2"><span className={`w-3 h-3 rounded ${x.c}`} />{x.l}</div>
+                ))}
+              </div>
+              {adlTrend.length > 1 && (
+                <div style={{width:'100%', height:180}} className="mt-4">
+                  <ResponsiveContainer>
+                    <BarChart data={adlTrend} margin={{top:10,right:10,left:-25,bottom:0}}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                      <XAxis dataKey="date" tick={{fontSize:10, fill:'#64748B'}} axisLine={false} tickLine={false} />
+                      <YAxis domain={[0,20]} tick={{fontSize:10, fill:'#64748B'}} axisLine={false} tickLine={false} />
+                      <Tooltip contentStyle={{borderRadius:12, fontSize:12}} />
+                      <Bar dataKey="ADL" fill="#0F766E" radius={[6,6,0,0]} maxBarSize={30} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
+      {tab === 3 && (
+        <Card title="แผนการดูแลต่อเนื่อง (Care Plan)">
+          <div className="grid sm:grid-cols-2 gap-4 text-sm mb-4">
+            <Info label="วันที่เยี่ยมล่าสุด" value={e.lastVisit} />
+            <Info label="กำหนดเยี่ยมครั้งถัดไป" value={e.nextVisit} />
+          </div>
+          <div className="space-y-3">
+            {history.slice(0,3).map(h => (
+              <div key={h.id} className="p-3 rounded-xl border border-slate-100 bg-slate-50/60">
+                <p className="text-xs text-slate-400">{toThaiDate(h.date)} · โดย {h.visitor}</p>
+                <p className="text-sm text-slate-700 mt-1"><b>แผน:</b> {h.plan || '-'}</p>
+              </div>
+            ))}
+            {history.length === 0 && <p className="text-sm text-slate-400 text-center py-6">ยังไม่มีแผนการดูแลที่บันทึกไว้</p>}
+          </div>
+        </Card>
+      )}
+      {tab === 4 && (
+        <Card title={`ประวัติการเยี่ยม (${history.length} ครั้ง)`} subtitle="เรียงจากครั้งล่าสุด">
+          {history.length === 0 ? <p className="text-sm text-slate-400 text-center py-8">ยังไม่มีประวัติการเยี่ยมสำหรับผู้สูงอายุรายนี้</p> : (
+            <div className="relative pl-6">
+              <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-slate-200" />
+              <div className="space-y-5">
+                {history.map(h => (
+                  <div key={h.id} className="relative">
+                    <span className={`absolute -left-[22px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-white ${h.urgency==='เร่งด่วน'?'bg-red-500':h.urgency==='ติดตาม'?'bg-amber-500':'bg-primary'}`} />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-sm font-semibold text-slate-800">{toThaiDate(h.date)}</p>
+                      <StatusBadge label={h.visitType || 'เยี่ยมบ้าน'} type="info" />
+                      <StatusBadge label={h.urgency || 'ปกติ'} />
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5">ผู้เยี่ยม: {h.visitor || '-'} · ADL {h.adl || '-'} · BP {h.bp || '-'}</p>
+                    <p className="text-sm text-slate-600 mt-1">{h.problem || '-'}</p>
+                    {h.plan && <p className="text-xs text-slate-500 mt-0.5">แผนต่อเนื่อง: {h.plan}</p>}
+                    {h.photoUrl && <img src={h.photoUrl} className="mt-2 w-24 h-24 object-cover rounded-lg border border-slate-200" />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </Card>
+      )}
+      {tab === 5 && (
+        <Card title="วัสดุและอุปกรณ์ที่ได้รับ">
+          <DataTable pageSize={5} data={mockEquipmentMoves.filter(m => m.receiver === e.name)} columns={[
+            { key:'date', header:'วันที่' }, { key:'item', header:'รายการ' },
+            { key:'action', header:'ประเภทรายการ', render:r => <StatusBadge label={r.action} type={r.action==='คืน'?'success':'info'} /> },
+            { key:'qty', header:'จำนวน' }, { key:'by', header:'ผู้ดำเนินการ' },
+          ]} emptyMessage="ยังไม่มีการเบิก/ยืมอุปกรณ์สำหรับผู้สูงอายุรายนี้" />
+        </Card>
+      )}
+    </div>
+  );
+}
+
+/* =========================================================================
+   pages/Reports.jsx
+   ========================================================================= */
+function Reports() {
+  const { elderly, visits, pieData } = useData();
+  const { showToast } = useToast();
+  const [selected, setSelected] = useState(reportTypes[0]);
+  const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({ from:'', to:'', village:'', cm:'', cg:'', adl:'', status:'' });
+
+  const setF = (k,v) => setFilters(f => ({...f,[k]:v}));
+
+  const runSearch = () => {
+    setLoading(true);
+    reportService.generate(selected.id, filters).then(() => {
+      setTimeout(() => { setLoading(false); showToast('ประมวลผลรายงานเรียบร้อยแล้ว'); }, 500);
+    });
+  };
+
+  const tableData = useMemo(() => {
+    let d = elderly;
+    if (filters.village) d = d.filter(e => e.village === filters.village);
+    if (filters.cm) d = d.filter(e => e.cm === filters.cm);
+    if (filters.cg) d = d.filter(e => e.cg === filters.cg);
+    if (filters.status) d = d.filter(e => e.visitStatus === filters.status);
+    if (selected.id === 'r5') d = d.filter(e => e.visitStatus === 'เกินกำหนด');
+    if (selected.id === 'r6') d = d.filter(e => e.urgency !== 'ปกติ');
+    return d;
+  }, [elderly, filters, selected]);
+
+  const staffChart = (selected.id === 'r3' ? mockCM : mockCG).map(s => ({ name:s.name.replace(/^(นาย|นาง|นางสาว)/,''), เป้าหมาย:s.elderlyCount, ผลงาน:s.visitsThisMonth }));
+  const equipChart = mockEquipment.map(e => ({ name:e.name.length>12 ? e.name.slice(0,12)+'…' : e.name, คงเหลือ:e.qty, ขั้นต่ำ:e.minQty }));
+
+  const exportFile = (type) => {
+    if (type === 'excel') {
+      const rows = [[selected.title],[`หน่วยบริการ: ${ORG.name}`],[],['HN','ชื่อ-นามสกุล','อายุ','หมู่บ้าน','ADL','กลุ่ม','CM','CG','เยี่ยมล่าสุด','สถานะ','ความเร่งด่วน']];
+      tableData.forEach(e => rows.push([e.hn,e.name,e.age,e.village,e.adl,e.group,e.cm,e.cg,e.lastVisit,e.visitStatus,e.urgency]));
+      downloadCSV(`${selected.title}.csv`, rows);
+      showToast('ส่งออกไฟล์ Excel (CSV) เรียบร้อยแล้ว');
+    } else { window.print(); }
+  };
+
+  const cols = selected.id === 'r7'
+    ? [{key:'id',header:'รหัส'},{key:'name',header:'ชื่ออุปกรณ์'},{key:'type',header:'ประเภท'},{key:'qty',header:'คงเหลือ'},{key:'minQty',header:'ขั้นต่ำ'},{key:'status',header:'สถานะ',render:r=><StatusBadge label={r.status}/>}]
+    : [
+      { key:'hn', header:'HN' },
+      { key:'name', header:'ชื่อ-นามสกุล', render:r => <Link to={`/elderly/${r.id}`} className="font-medium hover:text-primary">{r.name}</Link> },
+      { key:'age', header:'อายุ', render:r=>`${r.age} ปี` },
+      { key:'village', header:'หมู่บ้าน' },
+      { key:'group', header:'กลุ่ม', render:r => <StatusBadge label={r.group} /> },
+      { key:'cg', header:'CG' },
+      { key:'lastVisit', header:'เยี่ยมล่าสุด' },
+      { key:'visitStatus', header:'สถานะ', render:r => <StatusBadge label={r.visitStatus} /> },
+    ];
+
+  return (
+    <div className="space-y-4">
+      <Card title="ตัวกรองรายงาน" subtitle="เลือกช่วงเวลาและเงื่อนไขที่ต้องการประมวลผล">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <Field label="ตั้งแต่วันที่"><input type="date" value={filters.from} onChange={e=>setF('from',e.target.value)} className="input" /></Field>
+          <Field label="ถึงวันที่"><input type="date" value={filters.to} onChange={e=>setF('to',e.target.value)} className="input" /></Field>
+          <Field label="หมู่บ้าน"><select value={filters.village} onChange={e=>setF('village',e.target.value)} className="input"><option value="">ทุกหมู่บ้าน</option>{villages.map(v=><option key={v}>{v}</option>)}</select></Field>
+          <Field label="ระดับ ADL"><select value={filters.adl} onChange={e=>setF('adl',e.target.value)} className="input"><option value="">ทุกระดับ</option><option>0-4</option><option>5-11</option><option>12-20</option></select></Field>
+          <Field label="Care Manager"><select value={filters.cm} onChange={e=>setF('cm',e.target.value)} className="input"><option value="">ทุก CM</option>{mockCM.map(c=><option key={c.id}>{c.name}</option>)}</select></Field>
+          <Field label="Caregiver"><select value={filters.cg} onChange={e=>setF('cg',e.target.value)} className="input"><option value="">ทุก CG</option>{mockCG.map(c=><option key={c.id}>{c.name}</option>)}</select></Field>
+          <Field label="สถานะการเยี่ยม"><select value={filters.status} onChange={e=>setF('status',e.target.value)} className="input"><option value="">ทุกสถานะ</option><option>เยี่ยมแล้ว</option><option>รอเยี่ยม</option><option>เกินกำหนด</option></select></Field>
+          <div className="flex items-end gap-2 flex-wrap">
+            <Button icon="Search" onClick={runSearch}>ค้นหารายงาน</Button>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100">
+          <Button variant="outline" icon="Sheet" onClick={()=>exportFile('excel')}>Export Excel</Button>
+          <Button variant="outline" icon="FileText" onClick={()=>exportFile('pdf')}>Export PDF</Button>
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+        {reportTypes.map(r => (
+          <button key={r.id} onClick={()=>setSelected(r)}
+            className={`text-left p-4 rounded-xl border flex items-start gap-3 transition-all ${selected.id===r.id ? 'border-primary bg-teal-50 ring-2 ring-primary/20' : 'border-slate-100 bg-white hover:border-primary/40 shadow-sm'}`}>
+            <Icon name={r.icon} className={`w-5 h-5 shrink-0 mt-0.5 ${selected.id===r.id ? 'text-primary' : 'text-slate-400'}`} />
+            <span className={`text-sm font-medium ${selected.id===r.id ? 'text-primary' : 'text-slate-700'}`}>{r.title}</span>
+          </button>
+        ))}
+      </div>
+
+      <Card title={selected.title} subtitle={`ข้อมูล ณ วันที่ ${toThaiDate(new Date())} · ${ORG.name}`}>
+        <div style={{width:'100%', height:300}}>
+          <ResponsiveContainer>
+            {selected.chart === 'pie' ? (
+              <PieChart>
+                <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={65} outerRadius={100} paddingAngle={3}>
+                  {pieData.map((e,i)=><Cell key={i} fill={e.color} />)}
+                </Pie>
+                <Tooltip formatter={(v,n)=>[`${v} คน`,n]} contentStyle={{borderRadius:12,fontSize:12}} /><Legend wrapperStyle={{fontSize:12}} />
+              </PieChart>
+            ) : selected.chart === 'staff' ? (
+              <BarChart data={staffChart} margin={{top:10,right:10,left:-20,bottom:0}}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                <XAxis dataKey="name" tick={{fontSize:10, fill:'#64748B'}} axisLine={false} tickLine={false} />
+                <YAxis tick={{fontSize:11, fill:'#64748B'}} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{borderRadius:12,fontSize:12}} /><Legend wrapperStyle={{fontSize:12}} />
+                <Bar dataKey="เป้าหมาย" fill="#2563EB" radius={[6,6,0,0]} maxBarSize={26} />
+                <Bar dataKey="ผลงาน" fill="#0F766E" radius={[6,6,0,0]} maxBarSize={26} />
+              </BarChart>
+            ) : selected.chart === 'equipment' ? (
+              <BarChart data={equipChart} margin={{top:10,right:10,left:-20,bottom:0}}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                <XAxis dataKey="name" tick={{fontSize:9, fill:'#64748B'}} axisLine={false} tickLine={false} />
+                <YAxis tick={{fontSize:11, fill:'#64748B'}} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{borderRadius:12,fontSize:12}} /><Legend wrapperStyle={{fontSize:12}} />
+                <Bar dataKey="คงเหลือ" fill="#0F766E" radius={[6,6,0,0]} maxBarSize={26} />
+                <Bar dataKey="ขั้นต่ำ" fill="#F59E0B" radius={[6,6,0,0]} maxBarSize={26} />
+              </BarChart>
+            ) : (
+              <BarChart data={monthlyVisitChart} margin={{top:10,right:10,left:-20,bottom:0}}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                <XAxis dataKey="month" tick={{fontSize:11, fill:'#64748B'}} axisLine={false} tickLine={false} />
+                <YAxis tick={{fontSize:11, fill:'#64748B'}} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{borderRadius:12,fontSize:12}} /><Legend wrapperStyle={{fontSize:12}} />
+                <Bar dataKey="เป้าหมาย" fill="#2563EB" radius={[6,6,0,0]} maxBarSize={28} />
+                <Bar dataKey="เยี่ยมจริง" fill="#0F766E" radius={[6,6,0,0]} maxBarSize={28} />
+              </BarChart>
+            )}
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      <Card title="ตารางรายละเอียด" action={<Button size="sm" variant="outline" icon="Download" onClick={()=>exportFile('excel')}>ดาวน์โหลดรายงาน</Button>}>
+        <DataTable columns={cols} data={selected.id==='r7' ? mockEquipment : tableData} loading={loading} pageSize={8} />
+      </Card>
+    </div>
+  );
+}
+
+/* =========================================================================
+   pages/EquipmentManagement.jsx
+   ========================================================================= */
+function EquipmentManagement() {
+  const { elderly } = useData();
+  const { showToast } = useToast();
+  const [items, setItems] = useState([]);
+  const [moves, setMoves] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [modal, setModal] = useState(null); // 'borrow' | 'add' | 'history'
+  const [borrowForm, setBorrowForm] = useState({ elderly:'', item:'', qty:1, date:new Date().toISOString().slice(0,10), by:'', note:'', action:'ยืม' });
+
+  useEffect(() => {
+    Promise.all([equipmentService.getAll(), equipmentService.getMoves()]).then(([a,b]) => { setItems(a); setMoves(b); setLoading(false); });
+  }, []);
+
+  const stats = useMemo(() => ({
+    total: items.reduce((s,i)=>s+i.qty,0),
+    available: items.filter(i=>i.status==='พร้อมใช้งาน').reduce((s,i)=>s+i.qty,0),
+    borrowed: items.filter(i=>i.status==='กำลังถูกยืม').reduce((s,i)=>s+i.qty,0),
+    repair: items.filter(i=>i.status==='รอซ่อม').reduce((s,i)=>s+i.qty,0),
+    low: items.filter(i=>i.qty <= i.minQty).length,
+  }), [items]);
+
+  const filtered = items.filter(i => !search || i.name.includes(search) || i.id.includes(search) || i.type.includes(search));
+  const bf = (k,v) => setBorrowForm(f => ({...f,[k]:v}));
+
+  const submitBorrow = async () => {
+    if (!borrowForm.elderly || !borrowForm.item) return showToast('กรุณาเลือกผู้สูงอายุและรายการอุปกรณ์','error');
+    await equipmentService.borrow(borrowForm);
+    setMoves(m => [{ id:'mv'+Date.now(), date:toThaiDate(borrowForm.date), item:borrowForm.item, action:borrowForm.action, qty:borrowForm.qty, receiver:borrowForm.elderly, by:borrowForm.by||'เจ้าหน้าที่ รพ.สต.' }, ...m]);
+    showToast(`บันทึกการ${borrowForm.action}อุปกรณ์เรียบร้อยแล้ว`);
+    setModal(null);
+  };
+
+  const cols = [
+    { key:'id', header:'รหัสอุปกรณ์' },
+    { key:'name', header:'ชื่ออุปกรณ์', render:r => <span className="font-medium text-slate-800">{r.name}</span> },
+    { key:'type', header:'ประเภท' },
+    { key:'qty', header:'คงเหลือ', render:r => <span className={r.qty<=r.minQty ? 'text-red-600 font-semibold' : 'font-semibold text-slate-700'}>{r.qty}</span> },
+    { key:'minQty', header:'ขั้นต่ำ' },
+    { key:'status', header:'สถานะ', render:r => <StatusBadge label={r.status} /> },
+    { key:'location', header:'สถานที่จัดเก็บ' },
+    { key:'act', header:'จัดการ', render:r => (
+      <div className="flex flex-wrap gap-1">
+        <Button size="sm" variant="soft" onClick={()=>{bf('item',r.name); bf('action','ยืม'); setModal('borrow');}}>เบิก/ยืม</Button>
+        <Button size="sm" variant="outline" onClick={()=>{bf('item',r.name); bf('action','คืน'); setModal('borrow');}}>คืน</Button>
+        <Button size="sm" variant="ghost" icon="Wrench" onClick={()=>showToast(`ส่งซ่อม "${r.name}" เรียบร้อยแล้ว`,'info')} />
+      </div>
+    )},
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap justify-end gap-2">
+        <Button variant="outline" icon="History" onClick={()=>setModal('history')}>ประวัติการเคลื่อนไหว</Button>
+        <Button variant="secondary" icon="PackagePlus" onClick={()=>showToast('บันทึกการรับเข้าคลังเรียบร้อยแล้ว','success')}>รับเข้าคลัง</Button>
+        <Button icon="Plus" onClick={()=>showToast('ฟังก์ชันเพิ่มวัสดุอยู่ระหว่างพัฒนา','info')}>เพิ่มวัสดุ/อุปกรณ์</Button>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+        <StatCard icon="Package" label="อุปกรณ์ทั้งหมด" value={`${stats.total} ชิ้น`} color="teal" />
+        <StatCard icon="PackageCheck" label="พร้อมใช้งาน" value={`${stats.available} ชิ้น`} color="green" />
+        <StatCard icon="PackageOpen" label="กำลังถูกยืม" value={`${stats.borrowed} ชิ้น`} color="blue" />
+        <StatCard icon="Wrench" label="รอซ่อม" value={`${stats.repair} ชิ้น`} color="red" />
+        <StatCard icon="TriangleAlert" label="ใกล้หมด" value={`${stats.low} รายการ`} color="amber" />
+      </div>
+
+      <FilterBar searchValue={search} onSearchChange={setSearch} placeholder="ค้นหารหัส, ชื่ออุปกรณ์ หรือประเภท" />
+      <DataTable columns={cols} data={filtered} loading={loading} />
+
+      <Modal open={modal==='borrow'} onClose={()=>setModal(null)} title={`บันทึกการ${borrowForm.action}อุปกรณ์`}
+        footer={<><Button variant="outline" onClick={()=>setModal(null)}>ยกเลิก</Button><Button icon="Save" onClick={submitBorrow}>บันทึก</Button></>}>
+        <div className="space-y-4">
+          <Field label="ผู้สูงอายุผู้รับอุปกรณ์ *">
+            <select value={borrowForm.elderly} onChange={e=>bf('elderly',e.target.value)} className="input">
+              <option value="">-- เลือกผู้สูงอายุ --</option>
+              {elderly.map(e => <option key={e.id} value={e.name}>{e.name} ({e.village})</option>)}
+            </select>
+          </Field>
+          <Field label="รายการอุปกรณ์ *">
+            <select value={borrowForm.item} onChange={e=>bf('item',e.target.value)} className="input">
+              <option value="">-- เลือกอุปกรณ์ --</option>
+              {items.map(i => <option key={i.id} value={i.name}>{i.name} (คงเหลือ {i.qty})</option>)}
+            </select>
+          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="จำนวน"><input type="number" min="1" value={borrowForm.qty} onChange={e=>bf('qty',e.target.value)} className="input" /></Field>
+            <Field label="วันที่ส่งมอบ"><input type="date" value={borrowForm.date} onChange={e=>bf('date',e.target.value)} className="input" /></Field>
+          </div>
+          <Field label="ผู้ดำเนินการ"><input value={borrowForm.by} onChange={e=>bf('by',e.target.value)} placeholder="ชื่อเจ้าหน้าที่ผู้ส่งมอบ" className="input" /></Field>
+          <Field label="หมายเหตุ"><textarea rows={2} value={borrowForm.note} onChange={e=>bf('note',e.target.value)} className="input" /></Field>
+        </div>
+      </Modal>
+
+      <Modal open={modal==='history'} onClose={()=>setModal(null)} title="ประวัติการเคลื่อนไหวของวัสดุอุปกรณ์" size="lg">
+        <DataTable pageSize={8} data={moves} columns={[
+          { key:'date', header:'วันที่' }, { key:'item', header:'รายการ' },
+          { key:'action', header:'ประเภท', render:r => <StatusBadge label={r.action} type={r.action==='คืน'?'success':r.action==='ส่งซ่อม'?'danger':'info'} /> },
+          { key:'qty', header:'จำนวน' }, { key:'receiver', header:'ผู้รับ' }, { key:'by', header:'ผู้ดำเนินการ' },
+        ]} />
+      </Modal>
+    </div>
+  );
+}
+
+/* =========================================================================
+   pages/UserManagement.jsx
+   ========================================================================= */
+const emptyUser = { name:'', username:'', email:'', phone:'', role:ROLES[3], area:'', status:'ใช้งาน' };
+
+function UserManagement() {
+  const { showToast } = useToast();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [fRole, setFRole] = useState('');
+  const [modal, setModal] = useState(false);
+  const [form, setForm] = useState(emptyUser);
+
+  useEffect(() => { userService.getAll().then(d => { setUsers(d); setLoading(false); }); }, []);
+  const up = (k,v) => setForm(f => ({...f,[k]:v}));
+
+  const filtered = users.filter(u => (!search || u.name.includes(search) || u.username.includes(search)) && (!fRole || u.role === fRole));
+
+  const save = async () => {
+    if (!form.name || !form.username) return showToast('กรุณากรอกชื่อ-นามสกุลและ Username','error');
+    await userService.save(form);
+    setUsers(u => form.id ? u.map(x => x.id===form.id ? form : x) : [...u, {...form, id:'u'+Date.now(), lastLogin:'ยังไม่เคยเข้าใช้'}]);
+    showToast(form.id ? 'แก้ไขข้อมูลผู้ใช้งานเรียบร้อยแล้ว' : 'เพิ่มผู้ใช้งานเรียบร้อยแล้ว');
+    setModal(false); setForm(emptyUser);
+  };
+
+  const toggleStatus = (u) => {
+    setUsers(list => list.map(x => x.id===u.id ? {...x, status: x.status==='ใช้งาน' ? 'ระงับการใช้งาน' : 'ใช้งาน'} : x));
+    showToast(u.status==='ใช้งาน' ? `ระงับบัญชี ${u.name} แล้ว` : `เปิดใช้งานบัญชี ${u.name} แล้ว`, 'warning');
+  };
+
+  const cols = [
+    { key:'name', header:'ชื่อ-นามสกุล', render:r => (
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full bg-teal-100 text-primary flex items-center justify-center text-xs font-semibold">{r.name.replace(/^(นาย|นาง|นางสาว)/,'')[0]}</div>
+        <div><p className="font-medium text-slate-800">{r.name}</p><p className="text-[11px] text-slate-400">{r.email}</p></div>
+      </div>
+    )},
+    { key:'username', header:'Username' },
+    { key:'role', header:'บทบาท', render:r => <StatusBadge label={r.role} type={r.role==='ผู้ดูแลระบบ'?'teal':'info'} /> },
+    { key:'area', header:'หน่วยงาน/พื้นที่' },
+    { key:'lastLogin', header:'เข้าใช้ล่าสุด' },
+    { key:'status', header:'สถานะบัญชี', render:r => <StatusBadge label={r.status} /> },
+    { key:'act', header:'จัดการ', render:r => (
+      <div className="flex gap-1">
+        <Button size="sm" variant="ghost" icon="Pencil" onClick={()=>{setForm(r); setModal(true);}} />
+        <Button size="sm" variant="ghost" icon={r.status==='ใช้งาน'?'Lock':'LockOpen'} className="text-amber-500" onClick={()=>toggleStatus(r)} />
+        <Button size="sm" variant="ghost" icon="KeyRound" className="text-blue-500" onClick={()=>showToast(`ส่งลิงก์รีเซ็ตรหัสผ่านไปยัง ${r.email} แล้ว`,'info')} />
+      </div>
+    )},
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-end"><Button icon="UserPlus" onClick={()=>{setForm(emptyUser); setModal(true);}}>เพิ่มผู้ใช้งาน</Button></div>
+      <FilterBar searchValue={search} onSearchChange={setSearch} placeholder="ค้นหาชื่อหรือ Username">
+        <select value={fRole} onChange={e=>setFRole(e.target.value)} className="input w-auto min-w-[180px]">
+          <option value="">ทุกบทบาท</option>{ROLES.map(r=><option key={r}>{r}</option>)}
+        </select>
+      </FilterBar>
+      <DataTable columns={cols} data={filtered} loading={loading} />
+
+      <Modal open={modal} onClose={()=>setModal(false)} title={form.id ? 'แก้ไขข้อมูลผู้ใช้งาน' : 'เพิ่มผู้ใช้งานใหม่'}
+        footer={<><Button variant="outline" onClick={()=>setModal(false)}>ยกเลิก</Button><Button icon="Save" onClick={save}>บันทึก</Button></>}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="ชื่อ-นามสกุล *"><input value={form.name} onChange={e=>up('name',e.target.value)} className="input" /></Field>
+          <Field label="Username *"><input value={form.username} onChange={e=>up('username',e.target.value)} className="input" /></Field>
+          <Field label="อีเมล"><input type="email" value={form.email} onChange={e=>up('email',e.target.value)} className="input" /></Field>
+          <Field label="เบอร์โทรศัพท์"><input value={form.phone} onChange={e=>up('phone',e.target.value)} className="input" /></Field>
+          <Field label="บทบาท"><select value={form.role} onChange={e=>up('role',e.target.value)} className="input">{ROLES.map(r=><option key={r}>{r}</option>)}</select></Field>
+          <Field label="พื้นที่รับผิดชอบ"><input value={form.area} onChange={e=>up('area',e.target.value)} placeholder="เช่น หมู่ 1-2 หรือ รพ.สต.บ้านทับสอ" className="input" /></Field>
+          <Field label="สถานะบัญชี" className="sm:col-span-2"><select value={form.status} onChange={e=>up('status',e.target.value)} className="input"><option>ใช้งาน</option><option>ระงับการใช้งาน</option></select></Field>
+        </div>
+      </Modal>
+    </div>
+  );
+}
+
+/* =========================================================================
+   pages/Settings.jsx
+   ========================================================================= */
+function Settings() {
+  const { source } = useData();
+  const { showToast } = useToast();
+  return (
+    <div className="space-y-4">
+      <Card title="ข้อมูลหน่วยบริการ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="ชื่อหน่วยบริการ"><input defaultValue={ORG.name} className="input" /></Field>
+          <Field label="ที่ตั้ง"><input defaultValue={ORG.area} className="input" /></Field>
+          <Field label="รหัสหน่วยบริการ (HCODE)"><input defaultValue="05446" className="input" /></Field>
+          <Field label="เบอร์โทรศัพท์"><input defaultValue="042-xxx-xxx" className="input" /></Field>
+        </div>
+        <div className="mt-4"><Button icon="Save" onClick={()=>showToast('บันทึกการตั้งค่าเรียบร้อยแล้ว')}>บันทึกการตั้งค่า</Button></div>
+      </Card>
+
+      <Card title="สถานะการเชื่อมต่อระบบ">
+        <div className="space-y-3 text-sm">
+          <Row label="Firebase Firestore" ok={source==='firestore'} detail={source==='firestore' ? `เชื่อมต่อแล้ว (โปรเจกต์ ${firebaseConfig.projectId})` : 'ยังไม่ได้เชื่อมต่อ — กรุณาตรวจสอบ apiKey และเปิดใช้ Firestore'} />
+          <Row label="ImgBB (จัดเก็บรูปภาพ)" ok={!!IMGBB_API_KEY} detail={IMGBB_API_KEY ? 'พร้อมใช้งาน' : 'ยังไม่ได้ตั้งค่า API Key'} />
+          <Row label="REST API Backend" ok={false} detail="ยังไม่เชื่อมต่อ — เตรียมโครงสร้าง service layer ไว้แล้วใน services/api.js" />
+        </div>
+      </Card>
+
+      <Card title="การแจ้งเตือน">
+        <div className="space-y-3">
+          {['แจ้งเตือนเมื่อมีผู้สูงอายุเกินกำหนดเยี่ยม','แจ้งเตือนเคสเร่งด่วนให้ CM ทันที','แจ้งเตือนเมื่อวัสดุอุปกรณ์ใกล้หมด','สรุปผลงานรายสัปดาห์ทางอีเมล'].map((t,i) => (
+            <label key={t} className="flex items-center justify-between gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+              <span className="text-sm text-slate-600">{t}</span>
+              <input type="checkbox" defaultChecked={i<3} className="w-4 h-4 accent-teal-700" />
+            </label>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function Row({ label, ok, detail }) {
+  return (
+    <div className="flex items-start gap-3 p-3 rounded-lg border border-slate-100">
+      <span className={`w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 ${ok ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+      <div><p className="font-medium text-slate-700">{label}</p><p className="text-xs text-slate-400">{detail}</p></div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   App.jsx  —  Routing
+   ========================================================================= */
+function App() {
+  return (
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/visits" element={<VisitRecord />} />
+        <Route path="/staff" element={<StaffManagement />} />
+        <Route path="/staff/:id" element={<StaffDetail />} />
+        <Route path="/elderly" element={<ElderlyManagement />} />
+        <Route path="/elderly/:id" element={<ElderlyDetail />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/equipment" element={<EquipmentManagement />} />
+        <Route path="/users" element={<UserManagement />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="*" element={<Card><p className="text-center text-slate-400 py-10">ไม่พบหน้าที่คุณค้นหา</p></Card>} />
+      </Route>
+    </Routes>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <HashRouter>
+    <ToastProvider>
+      <DataProvider>
+        <App />
+      </DataProvider>
+    </ToastProvider>
+  </HashRouter>
+);
+document.getElementById('boot')?.remove();
 </script>
 </body>
 </html>
